@@ -1,0 +1,178 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+
+class AuthController extends Controller
+{
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+            User::where('id', $user->id)->update(['last_login_at' => now()]);
+            return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!');
+        }
+
+        return redirect()->back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
+
+    public function verifyEmail(EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect('/');
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255|exists:users',
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            $token = Str::random(60);
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+            DB::table('password_reset_tokens')->insert([
+                'email' => $user->email,
+                'token' => $token,
+                'created_at' => now()
+            ]);
+            Mail::send('Mails.reset-password', ['token' => $token, 'email' => $user->email, 'name' => $user->name], function ($message) use ($request) {
+                $message->to($request->email)->subject('Reset Password');
+            });
+            }
+        return redirect('login')->with('status', 'Password Reset Link Sent. Please check your email');
+    }
+
+    public function newPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+        $data = DB::table('password_reset_tokens')->where('token', $request->token)->first();
+        if ($data) {
+            User::where('email', $data->email)->update(['password' => bcrypt($request->password)]);
+            DB::table('password_reset_tokens')->where('token', $request->token)->delete();
+            return redirect('login')->with('message', 'Password Changed Successfully');
+            }
+        else {
+            return redirect('forgot-password')->with('message-error', 'An Unexpected Error Occurred');
+        }
+    }
+
+    public function confirmPassword(Request $request) {
+        if(Auth::guard('web')->validate([
+            'email' => $request->user()->email,
+            'password' => $request->password
+        ])) {
+            $request->session()->put('auth.password_confirmed_at', time());
+            return redirect()->intended(route('dashboard'));
+        }
+        throw ValidationException::withMessages([
+            'password' => [__('auth.password'),],
+        ]);
+
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
+    public function register(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'username' => 'required|max:25|min:5|unique:users',
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|min:8|confirmed',
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+        ]);
+
+        $image = $request->file('profile_photo');
+        $image_name = bcrypt($request->username) . '.' . $image->getClientOriginalExtension();
+        $image->storeAs('public/profile_photo', $image_name);
+
+//        $user = new User();
+//        $user->username = $request->username;
+//        $user->name = $request->name;
+//        $user->email = $request->email;
+//        $user->profile_photo_path = $image_name;
+//        $user->password = bcrypt($request->password);
+//        $user->save();
+
+        $user = User::create([
+            'username' => $request->username,
+            'name' => $request->name,
+            'email' => $request->email,
+            'profile_photo_path' => $image_name,
+            'password' => bcrypt($request->password)
+        ]);
+
+        event((new Registered($user)));
+        auth()->login($user);
+
+        return redirect('/')->with('status', 'Registration Successful. Welcome ' . $user->name . '!');
+    }
+
+    public function loginPage()
+    {
+        //return view('Auth.login');
+        return Inertia::render('Auth/Login', [
+            'canResetPassword' => Route::has('forgot-password'),
+            'status' => session('status'),
+        ]);
+    }
+
+    public function registerPage()
+    {
+        //return view('Auth.register');
+        return Inertia::render('Auth/Register');
+    }
+
+    public function verifyEmailPage() {
+        return Inertia::render('Auth/VerifyEmail', [
+            'status' => session('status'),
+        ]);
+    }
+
+    public function forgotPasswordPage()
+    {
+        //return view('Auth.forgotPassword');
+        return Inertia::render('Auth/ForgotPassword', [
+            'status' => session('status'),
+        ]);
+    }
+
+    public function newPasswordPage()
+    {
+        $token = $_GET['token'];
+        //return view('Auth.newPassword', ['token' => $token]);
+        return Inertia::render('Auth/ResetPassword', [
+            'token' => $token
+        ]);
+    }
+
+    public function confirmPasswordPage() {
+        return Inertia::render('Auth/ConfirmPassword');
+    }
+
+}
