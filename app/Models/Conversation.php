@@ -31,4 +31,14 @@ class Conversation extends Model
         return $this->hasMany(Message::class);
     }
 
+    public static function getConversationsForSidebar($user) {
+        $users=User::getUsersExcept($user);
+        $servers=Server::getServersFor($user);
+        return $users->map(function (User $user) {
+            return $user->toConversationArray();
+        })->concat($servers->map(function (Server $server) {
+            return $server->toConversationArray();
+        }));
+    }
+
 }
