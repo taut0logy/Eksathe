@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -17,8 +18,12 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get("/user/{user}", function () {})->name('chat.user');
-    Route::get("/server/{server}", function () {})->name('chat.server');
+
+    Route::get("/user/{user}", [MessageController::class, 'messagesByUser'])->name('chat.user');
+    Route::get("/server/{server}", [MessageController::class, 'messagesByServer'])->name('chat.server');
+    Route::post('/message', [MessageController::class, 'store'])->name('message.store');
+    Route::delete('/message/{message}', [MessageController::class, 'destroy'])->name('message.destroy');
+    Route::get('/message/older/{message}', [MessageController::class, 'loadOlderMessages'])->name('message.load-older');
 });
 
 Route::middleware('auth')->group(function () {

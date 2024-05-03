@@ -72,4 +72,11 @@ class Server extends Model
             'last_message' => $this->last_message
             ];
     }
+
+    public static function updateConvWithMessage(mixed $serverId, $Message)
+    {
+        return self::updateOrCreate(['id' => $serverId], [
+            'last_message_id' => $Message->id
+        ]);
+    }
 }

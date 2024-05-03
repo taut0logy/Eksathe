@@ -93,9 +93,9 @@ export default function ChatLayout({ children }) {
     return (
         <>
             <div className="flex-1 w-full flex overflow-hidden text-gray-800 dark:text-gray-300" >
-                <div className={`transition-all w-full sm:w-[220px] md:w-[300px] dark:bg-slate-800 bg-slate-200
+                <div className={`transition-all w-full sm:w-[250px] md:w-[320px] dark:bg-slate-800 bg-slate-200
                 flex flex-col overflow-hidden ${
-                    selectedConversation ? "-ml-[100%] sm:m1-0" :""}`}
+                    selectedConversation ? "-ml-[100%] sm:ml-0" :""}`}
                 >
                         <div className="flex items-center justify-between py-2 px-3 text-xl font-medium mt-3 " > {/*title*/}
                             My Conversations
@@ -119,7 +119,7 @@ export default function ChatLayout({ children }) {
                             ))}
                         </div>
                 </div>
-                <div className="f1ex-1 flex flex-col overflow-hidden" >
+                <div className="flex-1 flex flex-col overflow-hidden" >
                     {children}
                 </div>
             </div>
