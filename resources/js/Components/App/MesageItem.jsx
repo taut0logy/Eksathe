@@ -11,7 +11,7 @@ export default function MessageItem({message, attachmentClick}) {
     console.log(curUser);
     return (
         <div className={"chat " + (
-            isMe ? "chat-end" : "chat-start"
+            isMe ? "chat-end ml-4" : "chat-start mr-4"
         )}>
             {<UserAvatar user={ message.sender} />}
             <div className={"chat-header"}>
