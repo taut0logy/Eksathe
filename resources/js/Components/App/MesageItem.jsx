@@ -8,7 +8,7 @@ import {FormatMessageDateLong} from "@/helpers.jsx";
 export default function MessageItem({message, attachmentClick}) {
     const curUser = usePage().props.auth.user;
     const isMe = (message.sender_id === curUser.id);
-    console.log(curUser);
+    //console.log(curUser);
     return (
         <div className={"chat " + (
             isMe ? "chat-end ml-4" : "chat-start mr-4"
@@ -16,7 +16,7 @@ export default function MessageItem({message, attachmentClick}) {
             {<UserAvatar user={ message.sender} />}
             <div className={"chat-header"}>
                 {!isMe ?message.sender.name : ""}
-                <time className="text-xs opacity-50 ml-2">{FormatMessageDateLong(message.created_at)}</time>
+                <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
             <div className={"chat-bubble relative " + (isMe ? "chat-bubble-info" : "")}>
                 <div className={"chat-message"}>

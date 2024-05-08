@@ -5,4 +5,5 @@ namespace App\Observers;
 class MessageObserver
 {
     //
+    
 }
