@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory(10)->create();
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 1; $i < 6; $i++) {
             $server = Server::factory()->create([
                 'owner_id' => 1,
                 'name' => 'Server ' . $i
@@ -46,6 +46,19 @@ class DatabaseSeeder extends Seeder
             $server->users()->attach(array_unique([1, ...$users]));
         }
         Message::factory(1000)->create();
+
+        $serverMessages = Message::whereNotNull('server_id')->orderByDesc('created_at');
+
+        $done=[];
+
+        foreach ($serverMessages->get() as $message) {
+            if(in_array($message->server_id, $done)) {
+                continue;
+            }
+            $server = Server::find($message->server_id);
+            $server->update(['last_message_id' => $message->id]);
+            $done[] = $message->server_id;
+        }
 
         $messages = Message::whereNull('server_id')->orderBy('created_at')->get();
 

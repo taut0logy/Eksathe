@@ -5,6 +5,7 @@ import TextInput from "@/Components/TextInput.jsx";
 import ConversationItem from "@/Components/App/ConversationItem.jsx";
 //import Echo from "laravel-echo";
 import React from "react";
+import { useEventBus } from "@/EventBus";
 
 // ChatLayout.propTypes = {
 //     children: ReactNode,
@@ -13,6 +14,7 @@ import React from "react";
 export default function ChatLayout({ children }) {
     const page = usePage();
     //const user = page.props.auth.user;
+    const { on } = useEventBus();
     const conversations = page.props.conversations;
     const selectedConversation = page.props.selectedConversation;
     const [localConversations, setLocalConversations] = useState([]);
@@ -20,6 +22,40 @@ export default function ChatLayout({ children }) {
     const [onlineUsers, setOnlineUsers] = useState({});
     const isOnline = (id) => !!onlineUsers[id];
     //console.log('conversations',conversations);
+    const messageCreated = (message) => {
+        setLocalConversations((old) => {
+            return old.map((e) => {
+                if (
+                    message.receiver_id &&
+                    !e.is_server &&
+                    (e.id == message.receiver_id || e.id == message.sender_id)
+                ) {
+                    //console.log("message", message);
+                    e.last_message_at = message.created_at;
+                    e.last_message = message.body;
+                    return e;
+                }
+                if (
+                    message.server_id &&
+                    !e.is_server &&
+                    e.id == message.sender_id
+                ) {
+                    //console.log("message", message);
+                    e.last_message_at = message.created_at;
+                    e.last_message = message.body;
+                    return e;
+                }
+                return e;
+            });
+        });
+    };
+
+    useEffect(() => {
+        const off = on("message.created", messageCreated);
+        return () => {
+            off();
+        };
+    }, [on]);
 
     useEffect(() => {
         setLocalConversations(conversations);
@@ -46,7 +82,7 @@ export default function ChatLayout({ children }) {
                 } else {
                     return 0;
                 }
-            }),
+            }).reverse(),
         );
     }, [localConversations]);
 
@@ -153,4 +189,3 @@ export default function ChatLayout({ children }) {
         </>
     );
 }
-

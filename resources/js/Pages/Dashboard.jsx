@@ -1,7 +1,7 @@
 import { Head } from "@inertiajs/react";
 import ChatLayout from "@/Layouts/ChatLayout.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline/index.js";
 //import ConversationItem from "@/Components/App/ConversationItem.jsx";
 import ConversationHeader from "@/Components/App/ConversationHeader.jsx";
@@ -9,13 +9,17 @@ import MessageInput from "@/Components/App/MessageInput.jsx";
 import MessageItem from "@/Components/App/MesageItem.jsx";
 import React from "react";
 import { useEventBus } from "@/EventBus";
+import axios from "axios";
 
 export default function Dashboard({
     selectedConversation = null,
     messages = null,
 }) {
     const [localMessages, setLocalMessages] = useState([]);
+    const [noMoreMessages, setNoMoreMessages] = useState(false);
+    const [scrollFromBottom, setScrollFromBottom] = useState(0);
     const messagesCtrRef = useRef(null);
+    const loadMoreIntersector = useRef(null);
     const { on } = useEventBus();
 
     const messageCreated = (message) => {
@@ -36,10 +40,48 @@ export default function Dashboard({
         }
     };
 
+    const loadMoreMessages = useCallback(() => {
+        //console.log("loadmoremessage")
+        if (noMoreMessages) return;
+        const messageId = localMessages[0].id;
+        axios
+            .get(route("message.load-older", messageId))
+            .then(({ data }) => {
+                if (data.data.length === 0) {
+                    setNoMoreMessages(true);
+                    return;
+                }
+
+                const scrollHeight = messagesCtrRef.current.scrollHeight;
+                const scrpollTop = messagesCtrRef.current.scrollTop;
+                const clientHeight = messagesCtrRef.current.clientHeight;
+                const useHeight = scrollHeight - scrpollTop - clientHeight;
+                setScrollFromBottom(useHeight);
+
+                setLocalMessages((prev) => {
+                    let data2 = data.data.reverse();
+
+                    //delete any element from data that exists in prev
+                    data2.forEach((message) => {
+                        if (prev.some((m) => m.id === message.id)) {
+                            data2 = data2.filter((m) => m.id !== message.id);
+                        }
+                    })
+                    return [...data2, ...prev];
+                });
+
+
+            });
+    }, [localMessages, noMoreMessages]);
+
     useEffect(() => {
+        //console.log("messages change")
         setLocalMessages(messages ? messages.data.reverse() : []);
     }, [messages]);
+
     useEffect(() => {
+        //console.log("new conversation selected / new message write")
+        setNoMoreMessages(false);
         setTimeout(() => {
             if (messagesCtrRef.current) {
                 messagesCtrRef.current.scrollTop =
@@ -47,11 +89,52 @@ export default function Dashboard({
             }
         }, 10);
 
+        setScrollFromBottom(0);
         const offCreated = on("message.created", messageCreated);
         return () => {
             offCreated();
         };
     }, [selectedConversation]);
+
+
+
+    useEffect(() => {
+        //console.log("localMesssage scroll loadmoremessage")
+        if (messagesCtrRef.current && scrollFromBottom !== null) {
+            messagesCtrRef.current.scrollTop =
+                messagesCtrRef.current.scrollHeight -
+                scrollFromBottom -
+                messagesCtrRef.current.offsetHeight;
+        }
+
+        if (noMoreMessages) {
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        loadMoreMessages();
+                    }
+                });
+            },
+            {
+                rootMargin: "0px 0px 450px 0px",
+            },
+        );
+
+        if (loadMoreIntersector.current) {
+            setTimeout(() => {
+                observer.observe(loadMoreIntersector.current);
+            }, 100);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [localMessages]);
+
     return (
         <>
             <Head title="Dashboard" />
@@ -87,6 +170,14 @@ export default function Dashboard({
                         )}
                         {localMessages.length > 0 && (
                             <div className={"flex flex-col flex-1"}>
+                                {
+                                    noMoreMessages && (
+                                        <div className="text-center opacity-40 nowrap">
+                                            Beginning of chat
+                                        </div>
+                                    )
+                                }
+                                <div ref={loadMoreIntersector}></div>
                                 {localMessages.map((message) => (
                                     <MessageItem
                                         key={message.id}

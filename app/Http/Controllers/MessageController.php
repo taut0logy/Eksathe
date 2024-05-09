@@ -20,14 +20,14 @@ class MessageController extends BaseController
 {
     public function messagesByServer(Server $server)
     {
-        $messages = Message::where('server_id', $server->id)->latest()->paginate(10);
+        $messages = Message::where('server_id', $server->id)->latest()->paginate(20);
         return  Inertia('Dashboard', ['selectedConversation' => $server->toConversationArray(), 'messages' => MessageResource::collection($messages)]);
     }
 
     public function messagesByUser(User $user)
     {
         $messages = Message::where('sender_id', auth()->id())->where('receiver_id', $user->id)->orWhere('sender_id', $user->id)->where('receiver_id', auth()->id())
-            ->latest()->paginate(10);
+            ->latest()->paginate(20);
         return  Inertia('Dashboard', ['selectedConversation' => $user->toConversationArray(), 'messages' => MessageResource::collection($messages)]);
     }
 

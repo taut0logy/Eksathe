@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class Conversation extends Model
 {
@@ -50,10 +51,13 @@ class Conversation extends Model
             $query->where('user_id_1', $receiverId)
                 ->where('user_id_2', $userId);
         })->first();
+
         if ($conversation) {
-            $conversation->update([
-                'last_message_id' => $message->id
-            ]);
+            // $conversation->update([
+            //     'last_message_id' => $message->id
+            // ]);
+            $conversation->last_message_id = $message->id;
+            $conversation->save();
         } else {
             Conversation::create([
                 'user_id_1' => $userId,
@@ -61,6 +65,5 @@ class Conversation extends Model
                 'last_message_id' => $message->id
             ]);
         }
-
     }
 }
