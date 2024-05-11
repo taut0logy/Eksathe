@@ -14,7 +14,7 @@ export default function UserAvatar({user, online=null, profile=false}) {
 
             {!user.profile_photo_path && (
                     <div className={`chat-image avatar placeholder ${onlineClass}`}>
-                        <div className={`bg-gray-400 text-gray-800 rounded-full ${sizeClass}`}>
+                        <div className={`bg-accent text-gray-800 rounded-full ${sizeClass}`}>
                             <span className={'text-xl'}>{user.name.substring(0,1).toUpperCase()}</span>
                         </div>
                     </div>

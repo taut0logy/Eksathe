@@ -138,11 +138,12 @@ export default function Dashboard({
     return (
         <>
             <Head title="Dashboard" />
+            <div></div>
             {!messages && (
                 <div className="flex flex-col items-center justify-center h-full text-center opacity-35">
                     <div
                         className={
-                            "text-2xl md:text-4xl p-16 text-slate-900 dark:text-slate-200"
+                            "text-2xl md:text-4xl p-5"
                         }
                     >
                         Select a chat to see messages
@@ -159,7 +160,7 @@ export default function Dashboard({
                     />
                     <div
                         ref={messagesCtrRef}
-                        className="flex-1 p-5 overflow-y-auto"
+                        className="flex flex-1 p-5 overflow-y-auto"
                     >
                         {localMessages.length === 0 && (
                             <div className="flex flex-col items-center justify-center h-full">

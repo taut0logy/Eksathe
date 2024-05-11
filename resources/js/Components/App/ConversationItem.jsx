@@ -19,14 +19,14 @@ export default function ConversationItem({
             !conversation.is_server &&
             selectedConversation.id === conversation.id
         ) {
-            classes = "border-blue-500 bg-black/20";
+            classes = "border-primary bg-primary/20";
         }
         if (
             selectedConversation.is_server &&
             conversation.is_server &&
             selectedConversation.id === conversation.id
         ) {
-            classes = "border-blue-500 bg-black/20";
+            classes = "border-primary bg-primary/20";
         }
     }
     return (
@@ -48,7 +48,7 @@ export default function ConversationItem({
             <div
                 className={`flex-1 text-xs max-w-full overflow-hidden ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
             >
-                <div className="flex items-center gap-1 justify-between">
+                <div className="flex items-center justify-between gap-1">
                     <h3
                         className={`text-sm font-semibold overflow-hidden text-nowrap text-ellipsis ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
                     >

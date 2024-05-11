@@ -21,6 +21,27 @@ export default function ChatLayout({ children }) {
     const [sortedConversations, setSortedConversations] = useState([]);
     const [onlineUsers, setOnlineUsers] = useState({});
     const isOnline = (id) => !!onlineUsers[id];
+
+    const onSearch = (e) => {
+        const value = e.target.value.toLowerCase();
+        console.log("value", value);
+        if (!value) {
+            setLocalConversations(localConversations);
+        } else {
+            setLocalConversations(
+                conversations.filter((conversation) => {
+                    return (
+                        conversation.name
+                            .toLowerCase()
+                            .includes(value) ||
+                        conversation.username
+                            .toLowerCase()
+                            .includes(value)
+                    );
+                }),
+            );
+        }
+    };
     //console.log('conversations',conversations);
     const messageCreated = (message) => {
         setLocalConversations((old) => {
@@ -122,35 +143,16 @@ export default function ChatLayout({ children }) {
         };
     }, []);
 
-    const onSearch = (e) => {
-        const value = e.target.value.toLowerCase();
-        if (!value) {
-            setLocalConversations(localConversations);
-        } else {
-            setLocalConversations(
-                conversations.filter((conversation) => {
-                    return (
-                        conversation.name
-                            .toLowerCase()
-                            .includes(value.toLowerCase()) ||
-                        conversation.username
-                            .toLowerCase()
-                            .includes(value.toLowerCase())
-                    );
-                }),
-            );
-        }
-    };
     return (
         <>
-            <div className="flex flex-1 w-full overflow-hidden text-gray-800 dark:text-gray-300">
+            <div className="flex flex-1 w-full overflow-hidden ">
                 <div
-                    className={`transition-all w-full sm:w-[250px] md:w-[320px] dark:bg-slate-800 bg-slate-200
+                    className={`transition-all w-full sm:w-[250px] md:w-[320px] lg:w-[350px] xl:w-[400px]
                 flex flex-col overflow-hidden ${
                     selectedConversation ? "-ml-[100%] sm:ml-0" : ""
                 }`}
                 >
-                    <div className="flex items-center justify-between px-3 py-2 mt-3 text-xl font-medium ">
+                    <div className="flex items-center justify-between px-3 py-2 mt-3 text-xl font-medium">
                         {" "}
                         {/*title*/}
                         My Conversations
@@ -164,10 +166,14 @@ export default function ChatLayout({ children }) {
                         </div>
                     </div>
                     <div className="p-3">
+                        {/* <label className="flex items-center gap-2 input input-bordered">
+                            <input type="text" className="grow" placeholder="Search users and servers" onKeyUp={onSearch} />
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
+                        </label> */}
                         <TextInput
                             onKeyUp={onSearch}
                             placeholder="Filter users and servers"
-                            className="w-full"
+                            className=""
                         />
                     </div>
                     <div className="flex-1 overflow-auto">

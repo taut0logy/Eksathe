@@ -58,8 +58,8 @@ export default function Authenticated({ header, children }) {
         }
     },[conversations])
     return (
-        <div className="flex flex-col h-screen min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="bg-white border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div className="flex flex-col h-screen min-h-screen overflow-y-scroll ">
+            <nav className="border-b border-primary/50">
                 <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -83,7 +83,7 @@ export default function Authenticated({ header, children }) {
                                         <span className="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md dark:text-gray-400 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
+                                                className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 transition duration-150 ease-in-out border border-transparent rounded-md text-primary hover:text-secondary focus:outline-none"
                                             >
                                                 {user.name}
 
@@ -103,7 +103,7 @@ export default function Authenticated({ header, children }) {
                                         </span>
                                     </Dropdown.Trigger>
 
-                                    <Dropdown.Content>
+                                    <Dropdown.Content contentClasses='bg-primary'>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} as="button">
                                             Log Out
@@ -163,7 +163,7 @@ export default function Authenticated({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow dark:bg-gray-800">
+                <header className="shadow bg-accent ">
                     <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">{header}</div>
                 </header>
             )}

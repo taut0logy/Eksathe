@@ -31,6 +31,6 @@ export default function NewMessageInput({value, onChange, onSend}) {
                   value={value}
                   onChange={(e) => onChangeEvent(e)}
                   onKeyDown={onInputKeyDown} ref={input}
-                  className="w-full resize-none input input-bordered rounded-r-none overflow-y-auto max-h-40"></textarea>
+                  className="w-full overflow-y-auto rounded-r-none resize-none textarea textarea-bordered max-h-40"></textarea>
     )
 }

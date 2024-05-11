@@ -57,7 +57,7 @@ export default function DeleteUserForm({ className = '' }) {
             <DangerButton onClick={confirmUserDeletion}>Delete Account</DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
+                <form onSubmit={deleteUser} className="p-6 bg-warning">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         Are you sure you want to delete your account?
                     </h2>
@@ -77,7 +77,7 @@ export default function DeleteUserForm({ className = '' }) {
                             ref={passwordInput}
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            className="mt-1 block w-3/4"
+                            className="block w-3/4 mt-1"
                             isFocused
                             placeholder="Password"
                         />
@@ -85,7 +85,7 @@ export default function DeleteUserForm({ className = '' }) {
                         <InputError message={errors.password} className="mt-2" />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
+                    <div className="flex justify-end mt-6">
                         <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
 
                         <DangerButton className="ms-3" disabled={processing}>

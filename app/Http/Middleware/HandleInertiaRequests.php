@@ -37,6 +37,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'conversations' => Auth::id() ? Conversation::getConversationsForSidebar(Auth::user()) : [],
+            'errors' => fn() => $request->session()->get('errors')
+                ? $request->session()->get('errors')->getBag('default')->getMessages()
+                : (object) [],
+            'darkMode' => $request->session()->get('dark_mode') ?? false,
         ];
     }
 }

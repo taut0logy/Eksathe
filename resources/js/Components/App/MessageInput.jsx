@@ -62,12 +62,12 @@ export default function MessageInput(conversation = null) {
     return (
         <div
             className={
-                "flex flex-wrap items-start border-t border-slate-200 dark:border-slate-700 py-3"
+                "flex flex-wrap items-start border-t py-3 border-primary/50"
             }
         >
             <div className={"order-2 flex-1 xs:flex-none xs:order-1 p-2"}>
                 <button
-                    className={"p-1 text-gray-400 hover:text-gray-300 relative"}
+                    className={"p-1 btn-ghost relative hover:text-primary"}
                 >
                     <PaperClipIcon className={"w-6"} />
                     <input
@@ -79,7 +79,7 @@ export default function MessageInput(conversation = null) {
                     />
                 </button>
                 <button
-                    className={"p-1 text-gray-400 hover:text-gray-300 relative"}
+                    className={"p-1 btn-ghost relative hover:text-primary"}
                 >
                     <PhotoIcon className={"w-6"} />
                     <input
@@ -104,7 +104,7 @@ export default function MessageInput(conversation = null) {
                         onChange={(e) => setNewMessage(e.target.value)}
                     />
                     <button
-                        className={"btn btn-info rounded-l-none"}
+                        className={"btn btn-primary rounded-l-none"}
                         onClick={onSendMessage}
                         disabled={messageSending}
                     >
@@ -122,10 +122,10 @@ export default function MessageInput(conversation = null) {
                 )}
             </div>
             <div className={"flex order-3 xs:order-3 p-2"}>
-                <button className={"p-1 text-gray-400 hover:text-gray-300"}>
+                <button className={"p-1 btn-ghost hover:text-primary"}>
                     <FaceSmileIcon className={"w-6"} />
                 </button>
-                <button className={"p-1 text-gray-400 hover:text-gray-300"}>
+                <button className={"p-1 btn-ghost hover:text-primary"}>
                     <HandThumbUpIcon className={"w-6"} />
                 </button>
             </div>

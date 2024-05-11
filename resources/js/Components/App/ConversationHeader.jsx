@@ -8,11 +8,11 @@ export default function ConversationHeader({selectedConversation}) {
     return (
         <>
             {selectedConversation && (
-                <div className="flex justify-between items-center p-3 border-b border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between p-3 shadow-md shadow-grey-800 bg-primary/20">
                     <div className={"flex items-center gap-3"}>
                         <Link
                             href={route("dashboard")}
-                            className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                            className="text-primary hover:text-secondary"
                         >
                             <ArrowLeftIcon className="w-6"/>
                         </Link>
