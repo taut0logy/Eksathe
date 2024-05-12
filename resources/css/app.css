@@ -21,7 +21,7 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: var(--fallback-bg,oklch(var(--bg)));
+    background: var(--fallback-b1,oklch(var(--b1)));
     border-radius: 5px;
 }
 
@@ -37,7 +37,28 @@
     background: #555;
 }
 
+.EmojiPickerReact.epr-dark-theme {
+    /* background-color: var(--neutral);
+    color: var(--fallback-p,oklch(var(--p))); */
+    background: var(--fallback-b1, oklch(var(--b1)));
+    border: 1px solid var(--fallback-border,oklch(var(--p)));
+    transition: all 0.3s ease;
+    transform-origin: bottom right;
 
+}
+
+.EmojiPickerReact.epr-dark-theme .epr-emoji-category-label {
+    background: var(--fallback-b1, oklch(var(--b1)));
+    color: var(--fallback-bc,oklch(var(--bc)));
+}
+
+.EmojiPickerReact.epr-dark-theme .epr-search-container input {
+    background: var(--fallback-b1, oklch(var(--b1)));
+    border: 1px solid var(--fallback-border,oklch(var(--p)));
+    border-radius: 0.5rem;
+    color: var(--fallback-bc,oklch(var(--bc)));
+
+}
 
 .chat-bubble {
     max-width: 30rem;

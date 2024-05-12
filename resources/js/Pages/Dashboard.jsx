@@ -20,6 +20,8 @@ export default function Dashboard({
     const [scrollFromBottom, setScrollFromBottom] = useState(0);
     const messagesCtrRef = useRef(null);
     const loadMoreIntersector = useRef(null);
+    const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
+    const [previewAttachment, setPreviewAttachment] = useState({});
     const { on } = useEventBus();
 
     const messageCreated = (message) => {
@@ -73,6 +75,14 @@ export default function Dashboard({
 
             });
     }, [localMessages, noMoreMessages]);
+
+
+
+    const onAttachmentClick = (attachments, ind) => {
+        setPreviewAttachment({attachments, ind,});
+        setShowAttachmentPreview(true);
+
+    }
 
     useEffect(() => {
         //console.log("messages change")
@@ -189,6 +199,16 @@ export default function Dashboard({
                         )}
                     </div>
                     <MessageInput conversation={selectedConversation} />
+                    {
+                        previewAttachment.attachments && (
+                            <AttachmentPreviewModal
+                                attachments={previewAttachment.attachments}
+                                ind={previewAttachment.ind}
+                                show={showAttachmentPreview}
+                                onClose={() => setShowAttachmentPreview(false)}
+                                />
+                        )
+                    }
                 </>
             )}
         </>

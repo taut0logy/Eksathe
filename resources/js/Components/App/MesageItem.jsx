@@ -6,6 +6,8 @@ import UserAvatar from "@/Components/App/UserAvatar.jsx";
 import {FormatMessageDateLong} from "@/helpers.jsx";
 import {materialDark, solarizedlight} from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import EmojiPicker from "emoji-picker-react";
+import MessageAttachments from "@/Components/App/MessageAttachments.jsx";
 
 export default function MessageItem({message, attachmentClick}) {
     const curUser = usePage().props.auth.user;
@@ -56,6 +58,10 @@ export default function MessageItem({message, attachmentClick}) {
                         <ReactMarkdown components = {components}>
                             {convertLinksToMarkdown(message.body)}
                         </ReactMarkdown>
+                        <MessageAttachments
+                            attachments={message.attachments}
+                            attachmentClick={attachmentClick}
+                        />
                     </div>
                 </div>
             </div>
