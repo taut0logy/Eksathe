@@ -10,6 +10,7 @@ import MessageItem from "@/Components/App/MesageItem.jsx";
 import React from "react";
 import { useEventBus } from "@/EventBus";
 import axios from "axios";
+import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal";
 
 export default function Dashboard({
     selectedConversation = null,
@@ -78,10 +79,11 @@ export default function Dashboard({
 
 
 
-    const onAttachmentClick = (attachments, ind) => {
-        setPreviewAttachment({attachments, ind,});
+    const attachmentClick = (attachments, ind) => {
+        //console.log("attachment click", ind);
+        setPreviewAttachment({attachments, ind});
         setShowAttachmentPreview(true);
-
+        console.log("attachment click", previewAttachment);
     }
 
     useEffect(() => {
@@ -193,6 +195,7 @@ export default function Dashboard({
                                     <MessageItem
                                         key={message.id}
                                         message={message}
+                                        attachmentClick={attachmentClick}
                                     />
                                 ))}
                             </div>
@@ -203,7 +206,7 @@ export default function Dashboard({
                         previewAttachment.attachments && (
                             <AttachmentPreviewModal
                                 attachments={previewAttachment.attachments}
-                                ind={previewAttachment.ind}
+                                index={previewAttachment.ind}
                                 show={showAttachmentPreview}
                                 onClose={() => setShowAttachmentPreview(false)}
                                 />

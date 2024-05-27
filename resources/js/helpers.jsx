@@ -45,19 +45,30 @@ export const formatMessageDateShort = (date) => {
 }
 
 export const isImage = (file) => {
-    return (file.mime || file.type).split('/')[0] === 'image';
+    let type = file.mime || file.type;
+    //console.log(type);
+    return type.split('/')[0] === 'image';
+    //return (file.mime || file.type).split('/')[0] === 'image';
 }
 
 export const isVideo = (file) => {
-    return (file.mime || file.type).split('/')[0] === 'video';
+    let type = file.mime || file.type;
+    //console.log(type);
+    return type.split('/')[0] === 'video';
+    //return (file.mime || file.type).split('/')[0] === 'video';
 }
 
 export const isAudio = (file) => {
-    return (file.mime || file.type).split('/')[0] === 'audio';
+    let type = file.mime || file.type;
+    //console.log(type);
+    return type.split('/')[0] === 'audio';
+    //return (file.mime || file.type).split('/')[0] === 'audio';
 }
 
 export const isPDF = (file) => {
-    return (file.mime || file.type) === 'application/pdf';
+    let type = file.mime || file.type;
+    return type === 'application/pdf';
+    //return (file.mime || file.type) === 'application/pdf';
 }
 
 export const isPreviewable = (file) => {

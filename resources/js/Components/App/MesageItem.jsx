@@ -12,7 +12,7 @@ import MessageAttachments from "@/Components/App/MessageAttachments.jsx";
 export default function MessageItem({message, attachmentClick}) {
     const curUser = usePage().props.auth.user;
     const isMe = (message.sender_id === curUser.id);
-
+    //console.log(message.attachments);
     const convertLinksToMarkdown=(text) => {
         const hasMarkdownLinks = /\[.*?\]\(.*?\)/.test(text);
         if (hasMarkdownLinks) {
@@ -52,11 +52,11 @@ export default function MessageItem({message, attachmentClick}) {
                 {!isMe ?message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
-            <div className={"chat-bubble relative " + (isMe ? "chat-bubble-primary dark:bg-opacity-70" : "chat-bubble-secondary dark:bg-opacity-70")}>
+            <div className={"chat-bubble relative pb-4 " + (isMe ? "chat-bubble-primary dark:bg-opacity-70" : "chat-bubble-secondary dark:bg-opacity-70")}>
                 <div className={"chat-message"}>
                     <div className={"chat-message-content"} >
                         <ReactMarkdown components = {components}>
-                            {convertLinksToMarkdown(message.body)}
+                            {message.body && convertLinksToMarkdown(message.body)}
                         </ReactMarkdown>
                         <MessageAttachments
                             attachments={message.attachments}

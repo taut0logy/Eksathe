@@ -77,7 +77,7 @@ export default function Authenticated({ header, children }) {
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            <div className="ms-3 relat ive">
+                            <div className="ms-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -104,8 +104,8 @@ export default function Authenticated({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content contentClasses='bg-primary'>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} as="button">
+                                        <Dropdown.Link className='rounded-md hover:bg-secondary' href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link className='rounded-md hover:bg-secondary' href={route('logout')} as="button">
                                             Log Out
                                         </Dropdown.Link>
                                     </Dropdown.Content>

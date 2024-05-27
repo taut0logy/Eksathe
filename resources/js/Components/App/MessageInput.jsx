@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import {
     PaperClipIcon,
@@ -13,7 +13,10 @@ import NewMessageInput from "./NewMessageInput.jsx";
 import axios from "axios";
 import EmojiPicker from "emoji-picker-react";
 import { Popover, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { isAudio, isImage } from "@/helpers.jsx";
+import AttachmentPreview from "./AttachmentPreview.jsx";
+import CustomAudioPlayer from "./CustomAudioPlayer.jsx";
+import AudioRecorder from "./AudioRecorder.jsx";
 
 
 export default function MessageInput(conversation = null) {
@@ -25,24 +28,31 @@ export default function MessageInput(conversation = null) {
     const [chosenFiles, setChosenFiles] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    //setChosenFiles((prev) => {return [...prev, ...newFile]});
-
     const onFileChange = (e) => {
-        const newFiles = Array.from(e.target.files).map((file) => {
-            return {file: file, url: URL.createObjectURL(file)};
-        });
+        console.log("onfilechange");
+
+        const files = e.target.files;
+        const newFiles=[...files].map((file) => {
+            return {
+                file:file,
+                url:URL.createObjectURL(file)
+            }
+        })
         setChosenFiles((prev) => {
             return [...prev, ...newFiles];
+
         });
+        console.log(chosenFiles);
     };
 
     const onSendMessage = () => {
         if (messageSending) return;
-        if (newMessage.trim() === "") {
+        if (newMessage.trim() === "" && chosenFiles.length === 0) {
             setInputError("Please provide a message or attachment");
             setTimeout(() => {
                 setInputError("");
             }, 3000);
+            return;
         }
         const formData = new FormData();
         chosenFiles.forEach((file) => {
@@ -56,7 +66,7 @@ export default function MessageInput(conversation = null) {
         if (c.is_server) {
             formData.append("server_id", c.id);
         }
-        //console.log("formData", formData);
+        console.log("formData", formData.data);
         setMessageSending(true);
         axios
             .post(route("message.store"), formData, {
@@ -78,6 +88,7 @@ export default function MessageInput(conversation = null) {
             .catch((error) => {
                 setMessageSending(false);
                 setChosenFiles([]);
+                setUploadProgress(0);
                 console.log('message input post error', error);
                 setMessageSending(false);
                 const errMessage= error?.response?.data?.message;
@@ -85,6 +96,7 @@ export default function MessageInput(conversation = null) {
                 setTimeout(() => {
                     setInputError("");
                 }, 5000);
+
             });
     };
 
@@ -102,6 +114,20 @@ export default function MessageInput(conversation = null) {
 
     }
 
+    useEffect (()=>{
+        console.log(chosenFiles.length);
+        chosenFiles.map((file) => {
+            console.log(file);
+            //console.log(isImage(file.file));
+        })
+    },[chosenFiles])
+
+    const audioReady = (file,url) => {
+        setChosenFiles((prev) => {
+            return [...prev, {file, url}];
+        });
+    }
+
     return (
         <div
             className={
@@ -110,11 +136,11 @@ export default function MessageInput(conversation = null) {
         >
             <div className={"order-2 flex-1 xs:flex-none xs:order-1 p-2"}>
                 <button
-                    className={"p-1 btn-ghost relative hover:text-primary"}
+                    className={"p-1 btn-ghost relative hover:text-primary rounded"}
                 >
                     <PaperClipIcon className={"w-6"} />
                     <input
-                        type={"file"}
+                        type="file"
                         onChange={onFileChange}
                         multiple
                         className={
@@ -123,11 +149,11 @@ export default function MessageInput(conversation = null) {
                     />
                 </button>
                 <button
-                    className={"p-1 btn-ghost relative hover:text-primary"}
+                    className={"p-1 btn-ghost relative hover:text-primary rounded"}
                 >
                     <PhotoIcon className={"w-6"} />
                     <input
-                        type={"file"}
+                        type="file"
                         onChange={onFileChange}
                         multiple
                         accept={"image/*"}
@@ -136,6 +162,8 @@ export default function MessageInput(conversation = null) {
                         }
                     />
                 </button>
+                <AudioRecorder onRecorded={audioReady}  />
+
             </div>
             <div
                 className={
@@ -169,23 +197,24 @@ export default function MessageInput(conversation = null) {
                         max="100"
                     </progress>
                 )}
-                {inputError && (
+                {inputError !=="" && (
                     <p className={"text-red-500 text-xs mt-1"}>{inputError}</p>
                 )}
                 <div className="flex flex-wrap gap-1 mt-2">
                     {
-                        chosenFiles.map((file, index) => {
+                        chosenFiles.map((file) => (
                             <div
                             className={"relative flex justify-between cursor-pointer" + (!!isImage(file.file)?"w-[240px]":"")}
                             key={file.file.name}
                             >
                                 {
                                     isImage(file.file) && (
-                                        <img src="file.url" alt={index} className="object-cover w-16 h-16"  />
+                                        <img src={file.url} alt="" className="object-cover w-16 h-16"  />
+                                        //<div>photo</div>
                                     )
                                 }
                                 {
-                                    idAudio(file.file) && (
+                                    isAudio(file.file) && (
                                         <CustomAudioPlayer file={file.file} showVolume={false} />
                                     )
                                 }
@@ -200,24 +229,24 @@ export default function MessageInput(conversation = null) {
                                         return prev.filter((f) => f.file.name !== file.file.name);
                                     });
                                 }}
-                                className="absolute w-6 h-6 text-gray-200 bg-gray-800 rounded-full hover:text-gray=800 hover:bg-gray-300 z-10">
+                                className="absolute w-6 h-6 text-gray-200 bg-gray-800 rounded-full hover:text-gray=800 hover:bg-primary z-10">
                                 <XCircleIcon className="w-6"/>
                                 </button>
                             </div>
-                        })
+                        ))
                     }
                 </div>
             </div>
             <div className={"flex order-3 xs:order-3 p-2"}>
                 <Popover className={"relative"}>
-                    <Popover.Button className="p-1 btn-ghost hover:text-primary">
+                    <Popover.Button className="p-1 btn-ghost hover:text-primary rounded">
                         <FaceSmileIcon className={"w-6"} />
                     </Popover.Button>
                     <Popover.Panel className={"absolute z-10 right-0 bottom-full"}>
                         <EmojiPicker theme="dark" onEmojiClick={(ev) => (setNewMessage(newMessage + ev.emoji))}></EmojiPicker>
                     </Popover.Panel>
                 </Popover>
-                <button className={"p-1 btn-ghost hover:text-primary"} onClick={onLikeClick}>
+                <button className={"p-1 btn-ghost hover:text-primary rounded"} onClick={onLikeClick}>
                     <HandThumbUpIcon className={"w-6"} />
                 </button>
             </div>

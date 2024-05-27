@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Log;
 
 class MessageController extends BaseController
 {
@@ -49,7 +50,9 @@ class MessageController extends BaseController
 
     public function store(StoreMesageRequest $request)
     {
+        Log::info('Request:', $request->all());
         $data = $request->validated();
+        Log::info('Validated Data:', $data);
         $data['sender_id'] = auth()->id();
         $receiverId = $data['receiver_id'] ?? null;
         $serverId = $data['server_id'] ?? null;
