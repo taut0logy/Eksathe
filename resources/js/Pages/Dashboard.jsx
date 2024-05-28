@@ -175,7 +175,7 @@ export default function Dashboard({
                         className="flex flex-1 p-5 overflow-y-auto"
                     >
                         {localMessages.length === 0 && (
-                            <div className="flex flex-col items-center justify-center h-full">
+                            <div className="flex flex-col items-center justify-center w-full">
                                 <div className={"text-2xl md:text-4xl p-16 "}>
                                     No Messages Yet
                                 </div>

@@ -17,13 +17,43 @@ use Inertia\Inertia;
 
 class AuthController extends Controller
 {
+
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'remember' => 'boolean',
+        ]);
+
         $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials, $request->remember)) {
+        $remember = $request->boolean('remember');
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            Auth::guard('web')->login($user);
             $request->session()->regenerate();
-            $user = Auth::user();
-            User::where('id', $user->id)->update(['last_login_at' => now()]);
+
+            $request->session()->put('user_id', $user->id);
+            $request->session()->put('authenticated', true);
+            $request->session()->put('user_name', $user->name);
+            $request->session()->put('auth.password_confirmed_at', time());
+
+            $user->update(['last_login_at' => now()]);
+
+            if ($remember) {
+                $rememberToken = Str::random(60);
+                DB::table('remember_tokens')->insert([
+                    'user_id' => $user->id,
+                    'token' => $rememberToken,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+                $cookie = cookie('remember_token', $rememberToken, 60 * 24 * 30);
+                return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!')->cookie($cookie);
+            }
+
             return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!');
         }
 
@@ -32,7 +62,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function verifyEmail(EmailVerificationRequest $request) {
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
         $request->fulfill();
 
         return redirect('/');
@@ -55,7 +86,7 @@ class AuthController extends Controller
             Mail::send('Mails.reset-password', ['token' => $token, 'email' => $user->email, 'name' => $user->name], function ($message) use ($request) {
                 $message->to($request->email)->subject('Reset Password');
             });
-            }
+        }
         return redirect('login')->with('status', 'Password Reset Link Sent. Please check your email');
     }
 
@@ -69,14 +100,14 @@ class AuthController extends Controller
             User::where('email', $data->email)->update(['password' => bcrypt($request->password)]);
             DB::table('password_reset_tokens')->where('token', $request->token)->delete();
             return redirect('login')->with('message', 'Password Changed Successfully');
-            }
-        else {
+        } else {
             return redirect('forgot-password')->with('message-error', 'An Unexpected Error Occurred');
         }
     }
 
-    public function confirmPassword(Request $request) {
-        if(Auth::guard('web')->validate([
+    public function confirmPassword(Request $request)
+    {
+        if (Auth::guard('web')->validate([
             'email' => $request->user()->email,
             'password' => $request->password
         ])) {
@@ -86,16 +117,29 @@ class AuthController extends Controller
         throw ValidationException::withMessages([
             'password' => [__('auth.password'),],
         ]);
-
     }
+
+    // public function logout(Request $request)
+    // {
+    //     Auth::guard('web')->logout();
+    //     $request->session()->invalidate();
+    //     $request->session()->regenerateToken();
+    //     return redirect('/');
+    // }
 
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        $request->session()->forget('user_id');
+        $request->session()->forget('authenticated');
+        $request->session()->forget('user_name');
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
+
         return redirect('/');
     }
+
     public function register(Request $request)
     {
         // Validate the request data
@@ -111,14 +155,6 @@ class AuthController extends Controller
         $image_name = bcrypt($request->username) . '.' . $image->getClientOriginalExtension();
         $image->storeAs('public/profile_photo', $image_name);
 
-//        $user = new User();
-//        $user->username = $request->username;
-//        $user->name = $request->name;
-//        $user->email = $request->email;
-//        $user->profile_photo_path = $image_name;
-//        $user->password = bcrypt($request->password);
-//        $user->save();
-
         $user = User::create([
             'username' => $request->username,
             'name' => $request->name,
@@ -128,7 +164,16 @@ class AuthController extends Controller
         ]);
 
         event((new Registered($user)));
-        auth()->login($user);
+        Auth::guard('web')->login($user);
+
+        $data = User::where('email', $request->email)->first();
+
+        $request->session()->regenerate();
+        $request->session()->put('user_id', $data->id);
+        $request->session()->put('authenticated', true);
+        $request->session()->put('user_name', $data->name);
+        $request->session()->put('auth.password_confirmed_at', time());
+        $data->update(['last_login_at' => now()]);
 
         return redirect('/')->with('status', 'Registration Successful. Welcome ' . $user->name . '!');
     }
@@ -148,7 +193,8 @@ class AuthController extends Controller
         return Inertia::render('Auth/Register');
     }
 
-    public function verifyEmailPage() {
+    public function verifyEmailPage()
+    {
         return Inertia::render('Auth/VerifyEmail', [
             'status' => session('status'),
         ]);
@@ -171,8 +217,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function confirmPasswordPage() {
+    public function confirmPasswordPage()
+    {
         return Inertia::render('Auth/ConfirmPassword');
     }
-
 }

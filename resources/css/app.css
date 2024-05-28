@@ -4,6 +4,7 @@
 
 #app {
     height: 100vh;
+    overflow-y: scroll;
 }
 .conversation-item .avatar.online::before,
 .conversation-item .avatar.offline::before {
