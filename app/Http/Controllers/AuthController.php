@@ -164,7 +164,7 @@ class AuthController extends Controller
         ]);
 
         event((new Registered($user)));
-        Auth::guard('web')->login($user);
+        Auth()->login($user);
 
         $data = User::where('email', $request->email)->first();
 
