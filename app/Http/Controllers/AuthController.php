@@ -166,14 +166,12 @@ class AuthController extends Controller
         event((new Registered($user)));
         Auth()->login($user);
 
-        $data = User::where('email', $request->email)->first();
-
         $request->session()->regenerate();
-        $request->session()->put('user_id', $data->id);
+        $request->session()->put('user_id', $user->id);
         $request->session()->put('authenticated', true);
-        $request->session()->put('user_name', $data->name);
+        $request->session()->put('user_name', $user->name);
         $request->session()->put('auth.password_confirmed_at', time());
-        $data->update(['last_login_at' => now()]);
+        $user->update(['last_login_at' => now()]);
 
         return redirect('/')->with('status', 'Registration Successful. Welcome ' . $user->name . '!');
     }
