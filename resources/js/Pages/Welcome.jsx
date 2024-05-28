@@ -48,9 +48,22 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                         <main className="mt-6 w-full flex flex-col justify-center items-center">
                             <div className="grid gap-6 lg:grid-cols-1 lg:gap-8 ">
-                                <p className='text-center text-xl w-full'>
+                                <p className='text-center text-3xl w-full'>
                                     Eksathe is a platform for collaborators to come together and share ideas, messages and files in style.
                                 </p>
+                                <div className='text-2xl text-center bold'>Key features include:</div>
+
+                                    <ul className='flex flex-col items-center list-disc'>
+                                        <li>Real-time messaging</li>
+                                        <li>Styling messages with markdown</li>
+                                        <li>Syntax highlighted code snippets</li>
+                                        <li>Private and group conversations</li>
+                                        <li>Notifications</li>
+                                        <li>File sharing</li>
+                                        <li>Collaboration tools</li>
+                                        <li>And much more...</li>
+                                    </ul>
+
                             </div>
                         </main>
 
