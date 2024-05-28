@@ -29,19 +29,43 @@ export default function Dashboard({
         if (
             (selectedConversation &&
                 selectedConversation.is_server &&
-                selectedConversation.id == message.server_id) ||
+                selectedConversation.id == message.server_id)
+        ) {
+            setLocalMessages((prev) => [...prev, message]);
+        }
+        if (
+            (selectedConversation &&
+            selectedConversation.is_user &&
+            selectedConversation.id === message.sender_id)  ||
             selectedConversation.id == message.receiver_id
         ) {
             setLocalMessages((prev) => [...prev, message]);
+        }
+    };
+
+    const messageDeleted = ({message}) => {
+        //console.log("message deleted", selectedConversation, message);
+        if (
+            (selectedConversation &&
+                selectedConversation.is_server &&
+                selectedConversation.id == message.server_id) ||
+                selectedConversation.id == message.receiver_id
+        ) {
+
+            setLocalMessages((prev) => {
+                return prev.filter((m) => m.id !== message.id);
+            });
         }
         if (
             selectedConversation &&
             selectedConversation.is_user &&
             selectedConversation.id === message.sender_id
         ) {
-            setLocalMessages((prev) => [...prev, message]);
+            setLocalMessages((prev) => {
+                return prev.filter((m) => m.id !== message.id);
+            });
         }
-    };
+    }
 
     const loadMoreMessages = useCallback(() => {
         //console.log("loadmoremessage")
@@ -93,16 +117,16 @@ export default function Dashboard({
 
     useEffect(() => {
         //console.log("new conversation selected / new message write")
-        setNoMoreMessages(false);
         setTimeout(() => {
             if (messagesCtrRef.current) {
                 messagesCtrRef.current.scrollTop =
                     messagesCtrRef.current.scrollHeight;
             }
         }, 10);
-
         setScrollFromBottom(0);
+        setNoMoreMessages(false);
         const offCreated = on("message.created", messageCreated);
+        const offDeleted = on("message.deleted", messageDeleted);
         return () => {
             offCreated();
         };
@@ -149,7 +173,7 @@ export default function Dashboard({
 
     return (
         <>
-            <Head title="Dashboard" />
+            <Head title="Conversations" />
             <div></div>
             {!messages && (
                 <div className="flex flex-col items-center justify-center h-full text-center opacity-35">

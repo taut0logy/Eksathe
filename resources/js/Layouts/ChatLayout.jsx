@@ -71,8 +71,32 @@ export default function ChatLayout({ children }) {
         });
     };
 
+    const messageDeleted = ({ prevMessage }) => {
+        if(!prevMessage) return;
+        setLocalConversations((old) => {
+            return old.map((e) => {
+                if(
+                    prevMessage.receiver_id && !e.is_server && (e.id == prevMessage.receiver_id || e.id == prevMessage.sender_id)
+                ) {
+                    e.last_message_at = prevMessage.created_at;
+                    e.last_message = prevMessage.body;
+                    return e;
+                }
+                if(
+                    prevMessage.server_id && e.is_server && e.id == prevMessage.sender_id
+                ) {
+                    e.last_message_at = prevMessage.created_at;
+                    e.last_message = prevMessage.body;
+                    return e;
+                }
+            });
+        });
+    }
+
+
     useEffect(() => {
         const off = on("message.created", messageCreated);
+        const off2 = on("message.deleted", messageDeleted);
         return () => {
             off();
         };
@@ -97,9 +121,9 @@ export default function ChatLayout({ children }) {
                     const bDate = new Date(b.last_message_at);
                     return aDate > bDate ? 1 : -1;
                 } else if (a.last_message_at) {
-                    return -1;
-                } else if (b.last_message_at) {
                     return 1;
+                } else if (b.last_message_at) {
+                    return -1;
                 } else {
                     return 0;
                 }

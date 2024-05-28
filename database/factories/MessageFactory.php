@@ -32,7 +32,7 @@ class MessageFactory extends Factory
             $serverId = $this->faker->randomElement(Server::pluck('id')->toArray());
             $server=Server::find($serverId);
             $senderId=$this->faker->randomElement($server->users->pluck('id')->toArray());
-            $receiverI=null;
+            $receiverId=null;
         }
 
         return [

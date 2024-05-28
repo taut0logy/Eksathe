@@ -90,7 +90,29 @@ class MessageController extends BaseController
         if($message->sender_id !== auth()->id()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+
+        $server = null;
+        $conversation = null;
+        $lastMessage = null;
+
+        if($message->is_server) {
+            $server = Server::where('last_message_id', $message->id)->first();
+        } else {
+            $conversation = Conversation::where('last_message_id', $message->id)->first();
+        }
+
+
+        //dd($server, $conversation);
         $message->delete();
-        return response('', 204);
+
+        if($server) {
+            $server=Server::find($server->id);
+            $lastMessage = $server->lastMessage;
+        } else if($conversation) {
+            $conversation=Conversation::find($conversation->id);
+            $lastMessage = $conversation->lastMessage;
+        }
+
+        return response()->json(['message' => $lastMessage ? new MessageResource($lastMessage) : null]);
     }
 }

@@ -69,6 +69,13 @@ export default function ConversationItem({
                         {conversation.last_message && (conversation.last_message.sender_id === user.id ? "You: " : "") + (conversation.last_message===null ? "Attachment" : conversation.last_message)}
                     </p>
                 )}
+                {!conversation.last_message && (
+                    <p
+                        className={`text-nowrap text-xs overflow-hidden text-ellipsis ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
+                    >
+                        {"(No messages yet)"}
+                    </p>
+                )}
             </div>
             {user.is_admin && conversation.is_user ? (
                 <UserOptionsDropdown conversation={conversation} />
