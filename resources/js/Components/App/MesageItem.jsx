@@ -8,6 +8,7 @@ import {materialDark, solarizedlight} from "react-syntax-highlighter/dist/cjs/st
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import EmojiPicker from "emoji-picker-react";
 import MessageAttachments from "@/Components/App/MessageAttachments.jsx";
+import MessageOptionsDropdown from "./MessageOptionsDropdown";
 
 export default function MessageItem({message, attachmentClick}) {
     const curUser = usePage().props.auth.user;
@@ -53,6 +54,11 @@ export default function MessageItem({message, attachmentClick}) {
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
             <div className={"chat-bubble relative pb-4 " + (isMe ? "chat-bubble-primary dark:bg-opacity-70" : "chat-bubble-secondary dark:bg-opacity-70")}>
+                {
+                    message.sender_id === curUser.id && (
+                        <MessageOptionsDropdown message={message} />
+                    )
+                }
                 <div className={"chat-message"}>
                     <div className={"chat-message-content"} >
                         <ReactMarkdown components = {components}>
