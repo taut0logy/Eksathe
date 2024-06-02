@@ -48,7 +48,7 @@ export default function MessageItem({message, attachmentClick}) {
         <div className={"chat p-2 " + (
             isMe ? "chat-end ml-4" : "chat-start mr-4"
         )}>
-            {<UserAvatar user={ message.sender} />}
+            {<UserAvatar user={ message.sender} online={true} />}
             <div className={"chat-header"}>
                 {!isMe ?message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>

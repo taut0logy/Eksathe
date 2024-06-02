@@ -101,8 +101,6 @@ class MessageController extends BaseController
             $conversation = Conversation::where('last_message_id', $message->id)->first();
         }
 
-
-        //dd($server, $conversation);
         $message->delete();
 
         if($server) {

@@ -41,7 +41,7 @@ export default function MessageOptionsDropdown({message}) {
                 >
                     <Menu.Items
                         className="absolute left-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1 px-1">
+                        <div className="">
                             <Menu.Item>
                                 {({active}) => (
                                     <button
@@ -50,7 +50,7 @@ export default function MessageOptionsDropdown({message}) {
                                             active ? 'bg-black/30 text-white' : 'text-gray-100'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
-                                        <span className={'text-red-500 flex'}>
+                                        <span className={'text-red-500 flex items-center justify-center'}>
                                                     <TrashIcon   className={'w-4 h-4 mr-2'} />
                                                     Delete Message</span>
                                     </button>

@@ -53,17 +53,17 @@ export default function ChatLayout({ children }) {
                 ) {
                     //console.log("message", message);
                     e.last_message_at = message.created_at;
-                    e.last_message = message.body;
+                    e.last_message =  e.last_message = message.body ? message.body : (message.attachments.length > 1 ? "Sent Attachments" : "Sent an Attachment");
                     return e;
                 }
                 if (
                     message.server_id &&
-                    !e.is_server &&
+                    e.is_server &&
                     e.id == message.sender_id
                 ) {
                     //console.log("message", message);
                     e.last_message_at = message.created_at;
-                    e.last_message = message.body;
+                    e.last_message = message.body ? message.body : (message.attachments.length > 1 ? "Sent Attachments" : "Sent an Attachment");
                     return e;
                 }
                 return e;
@@ -71,27 +71,47 @@ export default function ChatLayout({ children }) {
         });
     };
 
-    const messageDeleted = ({ prevMessage }) => {
-        if(!prevMessage) return;
-        setLocalConversations((old) => {
-            return old.map((e) => {
-                if(
-                    prevMessage.receiver_id && !e.is_server && (e.id == prevMessage.receiver_id || e.id == prevMessage.sender_id)
-                ) {
-                    e.last_message_at = prevMessage.created_at;
-                    e.last_message = prevMessage.body;
+    const messageDeleted = (prevMessage) => {
+        console.log("prevMessage", prevMessage);
+        if(!prevMessage.prevMessage) {
+            setLocalConversations((old) => {
+                return old.map((e) => {
+                    if(
+                        prevMessage.message.receiver_id && !e.is_server && (e.id == prevMessage.message.receiver_id || e.id == prevMessage.message.sender_id)
+                    ) {
+                        e.last_message_at = null;
+                        e.last_message = null;
+                        return e;
+                    }
                     return e;
-                }
-                if(
-                    prevMessage.server_id && e.is_server && e.id == prevMessage.sender_id
-                ) {
-                    e.last_message_at = prevMessage.created_at;
-                    e.last_message = prevMessage.body;
-                    return e;
-                }
+                });
             });
-        });
-    }
+            return;
+        }
+        messageCreated(prevMessage.prevMessage);
+    };
+
+    // const messageDeleted = (prevMessage) => {
+    //     if(!prevMessage) return;
+    //     setLocalConversations((old) => {
+    //         return old.map((e) => {
+    //             if(
+    //                 prevMessage.receiver_id && !e.is_server && (e.id == prevMessage.receiver_id || e.id == prevMessage.sender_id)
+    //             ) {
+    //                 e.last_message_at = prevMessage.created_at;
+    //                 e.last_message = prevMessage.body;
+    //                 return e;
+    //             }
+    //             if(
+    //                 prevMessage.server_id && e.is_server && e.id == prevMessage.sender_id
+    //             ) {
+    //                 e.last_message_at = prevMessage.created_at;
+    //                 e.last_message = prevMessage.body;
+    //                 return e;
+    //             }
+    //         });
+    //     });
+    // }
 
 
     useEffect(() => {
@@ -99,6 +119,7 @@ export default function ChatLayout({ children }) {
         const off2 = on("message.deleted", messageDeleted);
         return () => {
             off();
+            off2();
         };
     }, [on]);
 
@@ -206,7 +227,7 @@ export default function ChatLayout({ children }) {
                                 <ConversationItem
                                     key={`${conversation.is_server ? "server_" : "user_"}${conversation.id}`}
                                     conversation={conversation}
-                                    online={!!isOnline(conversation.id)}
+                                    online={ !!isOnline(conversation.id)}
                                     selectedConversation={selectedConversation}
                                 />
                             ))}

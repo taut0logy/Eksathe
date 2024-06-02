@@ -23,7 +23,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
-                                        className="rounded-md px-3 py-2 text-primary ring-1 ring-transparent transition hover:text-secondary focus:outline-none focus-visible:ring-[#FF2D20] "
+                                        className="rounded-md px-3 py-2 text-primary ring-1 ring-transparent transition hover:text-secondary focus:outline-none focus-visible:ring-secondary "
                                     >
                                         Dashboard
                                     </Link>
@@ -31,13 +31,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <>
                                         <Link
                                             href={route('login')}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                            className="rounded-md px-3 py-2 text-primary ring-1 ring-transparent transition hover:text-secondary focus:outline-none focus-visible:ring-secondary"
                                         >
                                             Log in
                                         </Link>
                                         <Link
                                             href={route('register')}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                            className="rounded-md px-3 py-2 text-primary ring-1 ring-transparent transition hover:text-secondary foxus:outline-none focus-visible:ring-secondary"
                                         >
                                             Register
                                         </Link>

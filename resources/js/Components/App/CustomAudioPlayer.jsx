@@ -1,7 +1,7 @@
 import { PauseCircleIcon, PlayCircleIcon } from "@heroicons/react/24/solid";
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 
-export default function CustomAudioPlayer ({file, showVolume=true}) {
+export default function CustomAudioPlayer ({file, showVolume=true} ) {
     const audioRef=useRef();
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(1);
@@ -31,7 +31,7 @@ export default function CustomAudioPlayer ({file, showVolume=true}) {
     }
 
     const handleLoadedMetadata = (e) => {
-        setDuration(audioRef.current.duration);
+        setDuration(e.target.duration);
     }
 
     const handleSeek = (e) => {
@@ -41,11 +41,23 @@ export default function CustomAudioPlayer ({file, showVolume=true}) {
         setProgress(seekTime);
     }
 
-
-
+    useEffect(() => {
+        const audio = audioRef.current;
+        if(progress!=duration) return;
+        audio.addEventListener("ended", () => {
+            setIsPlaying(false);
+            setProgress(0);
+        });
+        return () => {
+            audio.removeEventListener("ended", () => {
+                setIsPlaying(false);
+                setProgress(0);
+            });
+        }
+    }, [progress]);
 
     return (
-        <div className="w-full flex items-center gap-2 py-2 px-3 rounded-md bg-primary">
+        <div className="w-full flex items-center gap-2 py-3 px-3 rounded-md bg-primary/50">
             <audio src={file.url}
             ref={audioRef}
             controls
@@ -54,7 +66,7 @@ export default function CustomAudioPlayer ({file, showVolume=true}) {
             className="hidden"
             />
             <button onClick={togglePlay}>
-                {isPlaying ? (
+                {isPlaying && (progress>0 && progress<duration) ? (
                     <PauseCircleIcon className="w-8 h-8 text-accent" />
                 ) : (
                     <PlayCircleIcon className="w-8 h-8 text-accent" />
@@ -62,9 +74,9 @@ export default function CustomAudioPlayer ({file, showVolume=true}) {
             </button>
                 {
                     showVolume && (
-                        <input type="range" min={"0"} max={"1"} step={"0.01"} value={"volume"} onChange={handleVolumeChange} />
+                        <input type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} />
                 )}
-                <input type="range" min={"0"} max={duration} step={"0.01"} value={progress} onChange={handleSeek} className="flex-1" />
+                <input type="range" min="0" max={duration} step={"0.01"} value={progress} onChange={handleSeek} className="flex-1" />
         </div>
 
     )

@@ -38,11 +38,12 @@ export default function MessageInput(conversation = null) {
                 url:URL.createObjectURL(file)
             }
         })
+        console.log(newFiles);
         setChosenFiles((prev) => {
             return [...prev, ...newFiles];
 
         });
-        console.log(chosenFiles);
+        //console.log(chosenFiles);
     };
 
     const onSendMessage = () => {
@@ -114,13 +115,12 @@ export default function MessageInput(conversation = null) {
 
     }
 
-    useEffect (()=>{
-        console.log(chosenFiles.length);
-        chosenFiles.map((file) => {
-            console.log(file);
-            //console.log(isImage(file.file));
-        })
-    },[chosenFiles])
+    // useEffect (()=>{
+    //     console.log(chosenFiles.length);
+    //     chosenFiles.map((file) => {
+    //         console.log(file);
+    //     })
+    // },[chosenFiles])
 
     const audioReady = (file,url) => {
         setChosenFiles((prev) => {
@@ -209,13 +209,12 @@ export default function MessageInput(conversation = null) {
                             >
                                 {
                                     isImage(file.file) && (
-                                        <img src={file.url} alt="" className="object-cover w-16 h-16"  />
-                                        //<div>photo</div>
+                                        <img src={file.url} alt="" className="object-cover w-16 h-16 border-2 rounded border-primary"  />
                                     )
                                 }
                                 {
                                     isAudio(file.file) && (
-                                        <CustomAudioPlayer file={file.file} showVolume={false} />
+                                        <CustomAudioPlayer file={file} showVolume={false} />
                                     )
                                 }
                                 {
@@ -229,7 +228,7 @@ export default function MessageInput(conversation = null) {
                                         return prev.filter((f) => f.file.name !== file.file.name);
                                     });
                                 }}
-                                className="absolute w-6 h-6 text-gray-200 bg-gray-800 rounded-full hover:text-gray=800 hover:bg-primary z-10">
+                                className="absolute w-6 h-6 -top-2 -right-2 text-gray-200 bg-gray-800 rounded-full hover:text-gray=800 hover:text-accent z-10">
                                 <XCircleIcon className="w-6"/>
                                 </button>
                             </div>

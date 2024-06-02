@@ -129,6 +129,7 @@ export default function Dashboard({
         const offDeleted = on("message.deleted", messageDeleted);
         return () => {
             offCreated();
+            offDeleted();
         };
     }, [selectedConversation]);
 

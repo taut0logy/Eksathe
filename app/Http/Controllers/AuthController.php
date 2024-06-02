@@ -29,38 +29,66 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
-        $user = User::where('email', $credentials['email'])->first();
-
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            Auth::guard('web')->login($user);
-            $request->session()->regenerate();
-
+        if(Auth::attempt($credentials, $remember)){
+            $user = User::where('email', $credentials['email'])->first();
             $request->session()->put('user_id', $user->id);
             $request->session()->put('authenticated', true);
             $request->session()->put('user_name', $user->name);
-            $request->session()->put('auth.password_confirmed_at', time());
-
             $user->update(['last_login_at' => now()]);
-
-            if ($remember) {
-                $rememberToken = Str::random(60);
-                DB::table('remember_tokens')->insert([
-                    'user_id' => $user->id,
-                    'token' => $rememberToken,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                $cookie = cookie('remember_token', $rememberToken, 60 * 24 * 30);
-                return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!')->cookie($cookie);
-            }
 
             return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!');
         }
+
+
 
         return redirect()->back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ]);
     }
+
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //         'remember' => 'boolean',
+    //     ]);
+
+    //     $credentials = $request->only('email', 'password');
+    //     $remember = $request->boolean('remember');
+
+    //     $user = User::where('email', $credentials['email'])->first();
+
+    //     if ($user && Hash::check($credentials['password'], $user->password)) {
+    //         Auth::guard('web')->login($user);
+    //         $request->session()->regenerate();
+
+    //         $request->session()->put('user_id', $user->id);
+    //         $request->session()->put('authenticated', true);
+    //         $request->session()->put('user_name', $user->name);
+    //         $request->session()->put('auth.password_confirmed_at', time());
+
+    //         $user->update(['last_login_at' => now()]);
+
+    //         // if ($remember) {
+    //         //     $rememberToken = Str::random(60);
+    //         //     DB::table('remember_tokens')->insert([
+    //         //         'user_id' => $user->id,
+    //         //         'token' => $rememberToken,
+    //         //         'created_at' => now(),
+    //         //         'updated_at' => now()
+    //         //     ]);
+    //         //     $cookie = cookie('remember_token', $rememberToken, 60 * 24 * 30);
+    //         //     return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!')->cookie($cookie);
+    //         // }
+
+    //         return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!');
+    //     }
+
+    //     return redirect()->back()->withErrors([
+    //         'email' => 'The provided credentials do not match our records.',
+    //     ]);
+    // }
 
     public function verifyEmail(EmailVerificationRequest $request)
     {
@@ -119,30 +147,19 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function logout(Request $request)
-    // {
-    //     Auth::guard('web')->logout();
-    //     $request->session()->invalidate();
-    //     $request->session()->regenerateToken();
-    //     return redirect('/');
-    // }
-
     public function logout(Request $request)
     {
+        Auth::guard('web')->logout();
         $request->session()->forget('user_id');
         $request->session()->forget('authenticated');
         $request->session()->forget('user_name');
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
         return redirect('/');
     }
 
     public function register(Request $request)
     {
-        // Validate the request data
         $request->validate([
             'username' => 'required|max:25|min:5|unique:users',
             'name' => 'required|max:255',
@@ -170,7 +187,6 @@ class AuthController extends Controller
         $request->session()->put('user_id', $user->id);
         $request->session()->put('authenticated', true);
         $request->session()->put('user_name', $user->name);
-        $request->session()->put('auth.password_confirmed_at', time());
         $user->update(['last_login_at' => now()]);
 
         return redirect('/')->with('status', 'Registration Successful. Welcome ' . $user->name . '!');
