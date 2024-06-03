@@ -48,12 +48,12 @@ export default function MessageItem({message, attachmentClick}) {
         <div className={"chat p-2 " + (
             isMe ? "chat-end ml-4" : "chat-start mr-4"
         )}>
-            {<UserAvatar user={ message.sender} online={true} />}
+            {<UserAvatar user={ message.sender} />}
             <div className={"chat-header"}>
                 {!isMe ?message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
-            <div className={"chat-bubble relative pb-4 " + (isMe ? "chat-bubble-primary dark:bg-opacity-70" : "chat-bubble-secondary dark:bg-opacity-70")}>
+            <div className={"chat-bubble relative pb-4 " + (isMe ? "chat-bubble-primary " : "chat-bubble-secondary ")}>
                 {
                     message.sender_id === curUser.id && (
                         <MessageOptionsDropdown message={message} />

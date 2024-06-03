@@ -1,9 +1,36 @@
 import {Link, usePage} from "@inertiajs/react";
-import {ArrowLeftIcon} from "@heroicons/react/24/solid/index.js";
+import {ArrowLeftIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/solid/index.js";
 import UserAvatar from "@/Components/App/UserAvatar.jsx";
 import ServerAvatar from "@/Components/App/ServerAvatar.jsx";
+import ServerDetailPopover from "@/Components/App/ServerDetailPopover.jsx";
+import ServerUsersPopover from "@/Components/App/ServerUsersPopover.jsx";
+import {useEventBus} from "@/EventBus";
+
 
 export default function ConversationHeader({selectedConversation}) {
+
+    const page = usePage();
+    const user = page.props.auth.user;
+    const { emit } = useEventBus();
+
+    let online = null;
+
+    
+
+    const onServerDelete = () => {
+        if(!window.confirm("Are you sure you want to delete this server?")){
+            return;
+        }
+
+        axios.delete(route('server.destroy', selectedConversation.id))
+            .then((response) => {
+                console.log("deleted", response.data);
+                emit('server.deleted', selectedConversation.id);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
 
     return (
         <>
@@ -31,6 +58,35 @@ export default function ConversationHeader({selectedConversation}) {
                             )}
                         </div>
                     </div>
+                    {selectedConversation.is_server && (
+                        <div className="flex gap-3">
+                            <ServerDetailPopover server={selectedConversation}/>
+                            <ServerUsersPopover users={selectedConversation.users}/>
+                            {
+                                selectedConversation.owner_id === user.id && (
+                                    <>
+                                    <div className="tooltip tooltip-left"
+                                    data-tip="Edit Server">
+                                        <button className="text-primary hover:text-accent"
+                                        onClick={(e) => emit("ServerModal.show", selectedConversation)}
+                                        >
+                                            <PencilSquareIcon className=" w-6 h-6"/>
+                                        </button>
+
+                                    </div>
+                                    <div className="tooltip tooltip-left"
+                                    data-tip="Delete Server">
+                                        <button className="text-primary hover:text-accent"
+                                        onClick={(e) => onServerDelete}
+                                        >
+                                            <TrashIcon className=" w-6 h-6"/>
+                                        </button>
+                                    </div>
+                                    </>
+                                )
+                            }
+                        </div>
+                    )}
                 </div>
             )}
         </>

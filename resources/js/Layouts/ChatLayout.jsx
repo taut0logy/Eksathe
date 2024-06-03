@@ -6,6 +6,7 @@ import ConversationItem from "@/Components/App/ConversationItem.jsx";
 //import Echo from "laravel-echo";
 import React from "react";
 import { useEventBus } from "@/EventBus";
+import ServerModal from "@/Components/App/ServerModal";
 
 // ChatLayout.propTypes = {
 //     children: ReactNode,
@@ -20,12 +21,13 @@ export default function ChatLayout({ children }) {
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
     const [onlineUsers, setOnlineUsers] = useState({});
+    const [showServerModal, setShowServerModal] = useState(false);
     const isOnline = (id) => !!onlineUsers[id];
 
     const onSearch = (e) => {
         const value = e.target.value.toLowerCase();
         console.log("value", value);
-        if (!value) {
+        if (!value || value == "") {
             setLocalConversations(localConversations);
         } else {
             setLocalConversations(
@@ -34,9 +36,8 @@ export default function ChatLayout({ children }) {
                         conversation.name
                             .toLowerCase()
                             .includes(value) ||
-                        conversation.username
-                            .toLowerCase()
-                            .includes(value)
+                            (conversation.is_server && conversation.description.toLowerCase().includes(value)) ||
+                            (conversation.is_user && conversation.username.toLowerCase().includes(value))
                     );
                 }),
             );
@@ -91,35 +92,16 @@ export default function ChatLayout({ children }) {
         messageCreated(prevMessage.prevMessage);
     };
 
-    // const messageDeleted = (prevMessage) => {
-    //     if(!prevMessage) return;
-    //     setLocalConversations((old) => {
-    //         return old.map((e) => {
-    //             if(
-    //                 prevMessage.receiver_id && !e.is_server && (e.id == prevMessage.receiver_id || e.id == prevMessage.sender_id)
-    //             ) {
-    //                 e.last_message_at = prevMessage.created_at;
-    //                 e.last_message = prevMessage.body;
-    //                 return e;
-    //             }
-    //             if(
-    //                 prevMessage.server_id && e.is_server && e.id == prevMessage.sender_id
-    //             ) {
-    //                 e.last_message_at = prevMessage.created_at;
-    //                 e.last_message = prevMessage.body;
-    //                 return e;
-    //             }
-    //         });
-    //     });
-    // }
-
-
     useEffect(() => {
         const off = on("message.created", messageCreated);
         const off2 = on("message.deleted", messageDeleted);
+        const off3 = on("ServerModal.show", (server) => {
+            setShowServerModal(true);
+        });
         return () => {
             off();
             off2();
+            off3();
         };
     }, [on]);
 
@@ -198,14 +180,15 @@ export default function ChatLayout({ children }) {
                 }`}
                 >
                     <div className="flex items-center justify-between px-3 py-2 mt-3 text-xl font-medium">
-                        {" "}
-                        {/*title*/}
+
                         My Conversations
                         <div
                             className="tooltip tooltip-left"
                             data-tip="Create new Server"
                         >
-                            <button className="text-gray-400 hover:text-gray-200">
+                            <button className="text-primary hover:text-accent"
+                                onClick={() => setShowServerModal(true)}
+                            >
                                 <PencilSquareIcon className="inline-block w-6 h-6 ml-2" />
                             </button>
                         </div>
@@ -237,6 +220,7 @@ export default function ChatLayout({ children }) {
                     {children}
                 </div>
             </div>
+            <ServerModal show = {showServerModal} onClose = {() => setShowServerModal(false)} />
         </>
     );
 }

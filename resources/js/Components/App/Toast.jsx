@@ -27,6 +27,7 @@ export default function  Toast({type = 'success'}) {
                     (type === 'info' && 'alert-info')
                 }`}>
                     <span>{toast.message}</span>
+                    
                 </div>
             ))}
 
