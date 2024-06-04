@@ -2,9 +2,29 @@ import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { UserIcon } from "@heroicons/react/24/solid";
 import UserAvatar from "@/Components/App/UserAvatar";
+import TextInput from "@/Components/TextInput";
 import { Link } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function ServerUsersPopover({ users = [] }) {
+    const [curUsers, setUsers] = useState(users);
+    const onSearch = (e) => {
+        const value = e.target.value.toLowerCase();
+        if (!value || value == "") {
+            setUsers(users);
+        } else {
+            setUsers(
+                users.filter((user) => {
+                    return (
+                        user.name
+                            .toLowerCase()
+                            .includes(value) ||
+                            (user.username && user.username.toLowerCase().includes(value))
+                    );
+                }),
+            );
+        }
+    }
     return (
         <Popover className={"relative"}>
             {({ open }) => (
@@ -28,7 +48,14 @@ export default function ServerUsersPopover({ users = [] }) {
                         <Popover.Panel className="absolute right-0 z-50 w-48 px-4 sm:px-0 mt-3">
                             <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
                                 <div className="bg-gray-800 p-2">
-                                    {users.map((user) => (
+                                <div className="mb-2 p-2">
+                                <TextInput
+                                    onKeyUp={onSearch}
+                                    placeholder="Search members"
+                                    className="w-full text-s rounded-md"
+                                />
+                                </div>
+                                    {curUsers.map((user) => (
                                         <Link key={user.id} href={route("chat.user", user.id)} className="flex items-center gap-2 py-2 px-3 hover:bg-black/30 rounded-md">
                                             <UserAvatar user={user} />
                                             <div className="text-xs">{user.name}</div>

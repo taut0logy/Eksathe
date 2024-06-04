@@ -25,8 +25,31 @@ export const EventBusProvider = ({ children }) => {
         }
     };
 
+    const stayOn = (event, callBack) => {
+        if(!events[event]) {
+            events[event] = [];
+        }
+
+        events[event].push(callBack);
+    }
+
+    const off = (event) => {
+        delete events[event];
+    }
+
+    const offAll = () => {
+        setEvents({});
+    }
+
+
+    const offCallback = (event, callBack) => {
+        if(events[event]) {
+            events[event] = events[event].filter(cb => cb !== callBack);
+        }
+    }
+
     return (
-        <EventBusContext.Provider value={{ emit, on }}>
+        <EventBusContext.Provider value={{ emit, on, off, offAll, stayOn, offCallback }}>
             {children}
         </EventBusContext.Provider>
     )

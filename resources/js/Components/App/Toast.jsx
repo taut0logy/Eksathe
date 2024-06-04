@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import {v4 as uuid} from 'uuid';
 
 
-export default function  Toast({type = 'success'}) {
+export default function  Toast({tye = 'success'}) {
     const [toasts, setToasts] = useState([]);
     const {on} = useEventBus();
 
@@ -27,7 +27,7 @@ export default function  Toast({type = 'success'}) {
                     (type === 'info' && 'alert-info')
                 }`}>
                     <span>{toast.message}</span>
-                    
+
                 </div>
             ))}
 

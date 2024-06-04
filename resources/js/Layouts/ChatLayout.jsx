@@ -15,20 +15,20 @@ import ServerModal from "@/Components/App/ServerModal";
 export default function ChatLayout({ children }) {
     const page = usePage();
     //const user = page.props.auth.user;
-    const { on } = useEventBus();
+    const { on, emit } = useEventBus();
     const conversations = page.props.conversations;
     const selectedConversation = page.props.selectedConversation;
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
     const [onlineUsers, setOnlineUsers] = useState({});
     const [showServerModal, setShowServerModal] = useState(false);
-    const isOnline = (id) => !!onlineUsers[id];
+    //const isOnline = (id) => !!onlineUsers[id];
 
     const onSearch = (e) => {
         const value = e.target.value.toLowerCase();
-        console.log("value", value);
+        //console.log("value", value);
         if (!value || value == "") {
-            setLocalConversations(localConversations);
+            setLocalConversations(conversations);
         } else {
             setLocalConversations(
                 conversations.filter((conversation) => {
@@ -73,7 +73,7 @@ export default function ChatLayout({ children }) {
     };
 
     const messageDeleted = (prevMessage) => {
-        console.log("prevMessage", prevMessage);
+        //console.log("prevMessage", prevMessage);
         if(!prevMessage.prevMessage) {
             setLocalConversations((old) => {
                 return old.map((e) => {
@@ -153,6 +153,7 @@ export default function ChatLayout({ children }) {
                     console.log("newOnlineUsers", newOnlineUsers);
                     return newOnlineUsers;
                 });
+                emit("online.users", Object.keys(onlineUsers));
             })
             .leaving((user) => {
                 console.log("leaving", user);
@@ -169,6 +170,10 @@ export default function ChatLayout({ children }) {
             Echo.leave("online");
         };
     }, []);
+
+    useEffect(() => {
+        emit("online.users", Object.keys(onlineUsers));
+    }, [onlineUsers]);
 
     return (
         <>
@@ -210,7 +215,7 @@ export default function ChatLayout({ children }) {
                                 <ConversationItem
                                     key={`${conversation.is_server ? "server_" : "user_"}${conversation.id}`}
                                     conversation={conversation}
-                                    online={ !!isOnline(conversation.id)}
+                                    //online={ !!isOnline(conversation.id)}
                                     selectedConversation={selectedConversation}
                                 />
                             ))}

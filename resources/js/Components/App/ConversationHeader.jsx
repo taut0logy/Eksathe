@@ -5,17 +5,22 @@ import ServerAvatar from "@/Components/App/ServerAvatar.jsx";
 import ServerDetailPopover from "@/Components/App/ServerDetailPopover.jsx";
 import ServerUsersPopover from "@/Components/App/ServerUsersPopover.jsx";
 import {useEventBus} from "@/EventBus";
+import { useEffect, useState } from "react";
 
 
 export default function ConversationHeader({selectedConversation}) {
 
     const page = usePage();
     const user = page.props.auth.user;
-    const { emit } = useEventBus();
+    const { on, emit } = useEventBus();
+//    const [isOnline, setIsOnline] = useState(false);
 
-    let online = null;
-
-    
+    // useEffect(() => {
+    //     on('online.users', (data) => {
+    //         setIsOnline(data.includes(selectedConversation.id.toString()));
+    //         //console.log("online users", data,  isOnline);
+    //     });
+    // }, [on]);
 
     const onServerDelete = () => {
         if(!window.confirm("Are you sure you want to delete this server?")){
@@ -35,7 +40,7 @@ export default function ConversationHeader({selectedConversation}) {
     return (
         <>
             {selectedConversation && (
-                <div className="flex items-center justify-between p-3 shadow-md shadow-grey-800 bg-primary/20">
+                <div className="flex items-center justify-between p-3 shadow-md shadow-grey-800 bg-neutral">
                     <div className={"flex items-center gap-3"}>
                         <Link
                             href={route("dashboard")}

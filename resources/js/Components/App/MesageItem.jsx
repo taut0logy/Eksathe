@@ -1,6 +1,7 @@
 import {Head} from "@inertiajs/react";
 import {usePage} from "@inertiajs/react";
 import React from "react";
+import {useEffect, useState} from "react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "@/Components/App/UserAvatar.jsx";
 import {FormatMessageDateLong} from "@/helpers.jsx";
@@ -9,10 +10,13 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import EmojiPicker from "emoji-picker-react";
 import MessageAttachments from "@/Components/App/MessageAttachments.jsx";
 import MessageOptionsDropdown from "./MessageOptionsDropdown";
+//import { useEventBus } from "@/EventBus";
 
 export default function MessageItem({message, attachmentClick}) {
     const curUser = usePage().props.auth.user;
     const isMe = (message.sender_id === curUser.id);
+    // const [isOnline, setIsOnline] = useState(false);
+    // const { on } = useEventBus();
     //console.log(message.attachments);
     const convertLinksToMarkdown=(text) => {
         const hasMarkdownLinks = /\[.*?\]\(.*?\)/.test(text);
@@ -43,6 +47,13 @@ export default function MessageItem({message, attachmentClick}) {
         }
     };
 
+    // useEffect(() => {
+    //     on('online.users', (data) => {
+    //         setIsOnline(data.includes(message.sender_id.toString()));
+    //         //console.log("online users", data,  isOnline);
+    //     });
+    // }, [on]);
+
     //console.log(curUser);
     return (
         <div className={"chat p-2 " + (
@@ -53,7 +64,7 @@ export default function MessageItem({message, attachmentClick}) {
                 {!isMe ?message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
-            <div className={"chat-bubble relative pb-4 " + (isMe ? "chat-bubble-primary " : "chat-bubble-secondary ")}>
+            <div className={"chat-bubble relative pb-4 " + (isMe ? "chat-bubble-neutral " : "bg-info/70 text-info-content")}>
                 {
                     message.sender_id === curUser.id && (
                         <MessageOptionsDropdown message={message} />

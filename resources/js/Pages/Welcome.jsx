@@ -1,3 +1,4 @@
+import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link, Head } from '@inertiajs/react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
@@ -17,7 +18,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                         <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                             <div className="flex lg:justify-center lg:col-start-2">
-                                <img className='w-20 h-20' src ="/img/logo.png" />
+                                <ApplicationLogo className="w-20 h-20 fill-current" />
                             </div>
                             <nav className="-mx-3 flex flex-1 justify-end">
                                 {auth.user ? (

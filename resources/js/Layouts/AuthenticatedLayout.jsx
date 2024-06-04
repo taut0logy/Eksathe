@@ -87,7 +87,7 @@ export default function Authenticated({ header, children }) {
                                         <span className="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 transition duration-150 ease-in-out border border-transparent rounded-md text-primary hover:text-secondary focus:outline-none"
+                                                className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 transition duration-150 ease-in-out border border-transparent rounded-md text-primary hover:text-accent focus:outline-none"
                                             >
                                                 {user.name}
 
@@ -108,10 +108,8 @@ export default function Authenticated({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content contentClasses='bg-primary'>
-                                        <Dropdown.Link className='rounded-md hover:bg-secondary' href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        <Dropdown.Link className='rounded-md hover:bg-secondary' href={route('logout')} as="button">
-                                            Log Out
-                                        </Dropdown.Link>
+                                        <Dropdown.Link className='rounded-md hover:bg-secondary text-primary-content' href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link className='rounded-md hover:bg-secondary text-primary-content' href={route('logout')} as="button">Log Out</Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
@@ -167,7 +165,7 @@ export default function Authenticated({ header, children }) {
             </nav>
 
             {header && (
-                <header className="shadow bg-accent ">
+                <header className="shadow bg-accent/80 ">
                     <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">{header}</div>
                 </header>
             )}
