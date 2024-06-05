@@ -27,7 +27,7 @@ export default function MessageAttachments({ attachments, attachmentClick }) {
                                     download
                                     href={attachment.url}
                                     className="z-10 opacity-100 group-hover:opacity-100 transition-all w-8 h-8 flex items-center
-                                        justify-center text-gray-800 rounded absolute top-0 right-0 cursor-pointer hover:bg-secondary"
+                                        justify-center text-gray-800 rounded absolute top-0 right-0 cursor-pointer hover:bg-secondary hover:text-secondary-content"
                                 >
                                     <ArrowDownTrayIcon className="w-4 h-4" />
                                 </a>
@@ -39,10 +39,10 @@ export default function MessageAttachments({ attachments, attachmentClick }) {
                                 />
                             )}
                             {isVideo(attachment) && (
-                                <div className="relative flex justify-center items-center rounded-md">
+                                <div className="relative flex justify-center items-center rounded-md w-36">
                                     <PlayCircleIcon className="z-20 w-16 h-16 absolute text-white opacity-70" />
-                                    <div className="absolute top-0 left-0 w-full h-full z-10 bg-black/20"></div>
-                                    <video src={attachment.url}></video>
+                                    <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
+                                    <video className="w-36 rounded-md" src={attachment.url}></video>
                                 </div>
                             )}
                             {isAudio(attachment) && (

@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'username' => $this->username,
             'name' => $this->name,
             //'email' => $this->email,
-            'profile_picture' => $this->profile_photo_path?Storage::url('profile_photo').$this->profile_photo_path:null,
+            'profile_picture' => $this->profile_photo_path?Storage::url($this->profile_photo_path):null,
             'role' => $this->role,
             'is_online' => $this->is_online,
             'is_admin' => $this->is_admin,

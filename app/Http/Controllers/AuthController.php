@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -165,18 +166,19 @@ class AuthController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:8|confirmed',
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:3072|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
         ]);
 
         $image = $request->file('profile_photo');
-        $image_name = bcrypt($request->username) . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('public/profile_photo', $image_name);
-
+        // $image_name = bcrypt($request->username) . '.' . $image->getClientOriginalExtension();
+        // $image->storeAs('public/profile_photo', $image_name);
+        $name = uniqid('avatar_') . '.' . $image->getClientOriginalExtension();
+        $path = $image->storeAs('avatars', $name, 'public');
         $user = User::create([
             'username' => $request->username,
             'name' => $request->name,
             'email' => $request->email,
-            'profile_photo_path' => $image_name,
+            'profile_photo_path' => $path,
             'password' => bcrypt($request->password)
         ]);
 

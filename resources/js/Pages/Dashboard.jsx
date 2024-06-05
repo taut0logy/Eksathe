@@ -107,7 +107,7 @@ export default function Dashboard({
         //console.log("attachment click", ind);
         setPreviewAttachment({attachments, ind});
         setShowAttachmentPreview(true);
-        console.log("attachment click", previewAttachment);
+        //console.log("attachment click", previewAttachment);
     }
 
     useEffect(() => {

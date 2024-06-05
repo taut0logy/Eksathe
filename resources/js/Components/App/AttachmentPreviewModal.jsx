@@ -4,7 +4,7 @@ import { PaperClipIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from "@he
 import { formatBytes, isImage, isPDF, isPreviewable, isVideo, isAudio } from "@/helpers";
 
 export default function AttachmentPreviewModal({attachments, index, show =  false, onClose=() => {}}) {
-    console.log(attachments, index);
+    //console.log(attachments, index);
     const [currentInd, setCurrentInd] = useState(0);
 
     const attachment = useMemo(() => {

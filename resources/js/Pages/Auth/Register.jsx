@@ -6,17 +6,25 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
+import { PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 export default function Register() {
+    const [avatar, setAvatar] = useState(null);
+
+    const clearAvatar = () => {
+        setAvatar(null);
+    };
     const { data, setData, post, processing, errors, reset } = useForm({
+        profile_photo: null,
         username: '',
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
+        _method: 'POST'
     });
 
-    const [file, setFile] = useState(null);
+    // const [file, setFile] = useState(null);
 
     useEffect(() => {
         return () => {
@@ -26,52 +34,66 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-        //post(route('register'));
-        const formData = new FormData();
-        Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
+        post(route('register'));
+        // const formData = new FormData();
+        // Object.entries(data).forEach(([key, value]) => {
+        //     formData.append(key, value);
+        // });
 
-        if(file instanceof File) {
-            formData.append('profile_photo', file);
-        }
-        //console.log(formData);
-        //log the data in file
+        // if(file instanceof File) {
+        //     formData.append('profile_photo', file);
+        // }
+        // //console.log(formData);
+        // //log the data in file
 
-
-        Inertia.post(route('register'), formData, {
-            onSuccess: () => reset('password', 'password_confirmation'),
-            forceFormData: true
-        });
+        // //console.log(profile_photo);
+        // Inertia.post(route('register'), formData, {
+        //     onSuccess: () => reset('password', 'password_confirmation'),
+        //     forceFormData: true
+        // });
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout logo = {false}>
             <Head title="Register" />
 
-            <form onSubmit={submit} encType="multipart/form-data">
+            <form onSubmit={submit} >
 
-                <div>
-                    <InputLabel htmlFor="profile_photo" value="Profile Photo" />
+            <div>
+                <InputLabel className="text-center mb-3" htmlFor="profile_photo" value="Choose Profile Photo" />
+                <div className="w-full flex items-center justify-center">
+                    <div className="relative rounded-full border-4 border-accent">
+                        {avatar && (
+                            <div className={`chat-image avatar flex items-center justify-center`}>
+                                <div className={`rounded-full w-40 h-40`}>
+                                    <img src={avatar} alt="" />
+                                </div>
+                            </div>
+                        )}
 
-                    <div className="mt-1">
+                        {!avatar && (
+                            <div className={`chat-image avatar flex items-center justify-center`}>
+                            <div className={`rounded-full w-40 h-40`}>
+                                <img className='bg-white' src={"/img/avatar.png"} alt="" />
+                            </div>
+                        </div>
+                        )}
                         <input
+                            type="file"
                             id="profile_photo"
                             name="profile_photo"
-                            type="file"
-                            className="block w-full text-sm text-slate-500
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-violet-50 file:text-violet-700
-                            hover:file:bg-violet-100
-                            dark:file:text-violet-500
-                            dark:hover:file:bg-violet-600
-                            dark:file:bg-violet-700 "
-                            onChange={(e) => setFile( e.target.files[0])}
-                            required
+                            className="w-40 h-40 absolute top-0 left-0 rounded-full opacity-0 overflow-hidden shadow-lg cursor-pointer"
+                            onChange={(e) =>{
+                                setAvatar(URL.createObjectURL(e.target.files[0]))
+                                setData("profile_photo", e.target.files[0])
+                            }
+                            }
                         />
+                        <PencilIcon className="w-10 h-10 absolute bottom-0 right-0 text-accent-content bg-accent rounded-full p-2 cursor-pointer" />
+                        {avatar && (<XMarkIcon className="w-8 h-8 absolute top-0 right-0 -translate-x-1 translate-y-1 text-accent-content bg-accent rounded-full p-2 cursor-pointer" onClick={clearAvatar} />)}
                     </div>
+                </div>
+                <InputError message={errors.profile_photo} className="mt-2 text-center" />
                 </div>
 
                 <div className="mt-4">

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -29,13 +31,28 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $profile_photo = $request->file('profile_photo');
+        $user = $request->user();
+        $data = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($profile_photo) {
+            if($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            $name = uniqid('avatar_') . '.' . $profile_photo->getClientOriginalExtension();
+            $path = $profile_photo->storeAs('avatars', $name, 'public');
+            $user->profile_photo_path = $path;
         }
 
-        $request->user()->save();
+        unset($data['profile_photo']);
+
+        $user->fill($data);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit');
     }
@@ -52,6 +69,12 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
+
+        $profilePhotoPath = $user->profile_photo_path;
+
+        if ($profilePhotoPath) {
+            Storage::disk('public')->delete($profilePhotoPath);
+        }
 
         $user->delete();
 

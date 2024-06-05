@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use LaravelIdea\Helper\App\Models\_IH_User_C;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -90,6 +91,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'username' => $this->username,
             'name' => $this->name,
             'is_server' => false,
+            'profile_picture' => $this->profile_photo_path ? Storage::url($this->profile_photo_path) : null,
             'is_user' => true,
             'is_admin' => (bool) $this->is_admin,
             'created_at' => $this->created_at,

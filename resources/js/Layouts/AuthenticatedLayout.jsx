@@ -82,7 +82,7 @@ export default function Authenticated({ header, children }) {
 
     return (
         <>
-        <div className="flex flex-col h-screen min-h-screen  ">
+        <div className="flex flex-col h-screen min-h-screen">
             <nav className="border-b border-primary/50">
                 <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
