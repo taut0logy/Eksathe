@@ -2,26 +2,26 @@
     import { useState, useEffect } from "react";
     import { useEventBus } from "@/EventBus";
     export default function UserAvatar({user, profile=false}) {
-        const { stayOn } = useEventBus();
+        const { on } = useEventBus();
         const [isOnline, setIsOnline] = useState(null);
         const sizeClass = profile ? 'w-40 h-40' : 'w-8 h-8';
         //let onlineClass = isOnline === true ? 'online' : isOnline === false ? 'offline' : '';
-        stayOn('online.users', (data) => {
-            setIsOnline(data.includes(user.id.toString()));
-            //console.log("online users", data,  isOnline, user.id);
-        });
+        // stayOn('online.users', (data) => {
+        //     setIsOnline(data.includes(user.id.toString()));
+        //     //console.log("online users", data,  isOnline, user.id);
+        // });
         // useEffect(() => {
         //     stayOn('online.users', (data) => {
         //         setIsOnline(!!data.includes(user.id.toString()));
         //         console.log("online users", data,  isOnline, user.id);
         //     });
         // }, [stayOn]);
-        // useEffect(() => {
-        //     on('online.users', (data) => {
-        //         setIsOnline(data.includes(user.id.toString()));
-        //         console.log("online users", data,  isOnline, user.id);
-        //     });
-        // }, [on, user.id]);
+        useEffect(() => {
+            on('online.users', (data) => {
+                setIsOnline(data.includes(user.id.toString()));
+                console.log("online users", data,  isOnline, user.id);
+            });
+        }, [on, user.id]);
 
         return (
             <>

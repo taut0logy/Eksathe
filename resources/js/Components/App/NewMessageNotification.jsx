@@ -14,7 +14,7 @@ export default function  NewMessageNotification({}) {
             const id = uuid();
             //console.log(user, server_id, message);
             let toast = {message, id, user, server_id};
-            console.log(toast);
+            //console.log(toast);
 
             let newToasts =[...toasts, toast];
             let uniqueToasts = newToasts.filter((toast, index, self) =>

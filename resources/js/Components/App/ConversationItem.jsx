@@ -77,7 +77,7 @@ export default function ConversationItem({
                     </p>
                 )}
             </div>
-            {user.is_admin && conversation.is_user ? (
+            {!!user.is_admin && conversation.is_user ? (
                 <UserOptionsDropdown conversation={conversation} />
             ) : null}
         </Link>

@@ -62,12 +62,12 @@ export default function MessageInput(conversation = null) {
         formData.append("body", newMessage.trim());
         //formData.append("sender_id", user.id);
         if (c.is_user) {
-            formData.append("receiver_id", c.id);
+            formData.append("receiver_id", parseInt(c.id));
         }
         if (c.is_server) {
-            formData.append("server_id", c.id);
+            formData.append("server_id", parseInt(c.id));
         }
-        console.log("formData", formData.data);
+        //console.log("formData", formData.data);
         setMessageSending(true);
         axios
             .post(route("message.store"), formData, {
@@ -75,7 +75,7 @@ export default function MessageInput(conversation = null) {
                     const percentCompleted = Math.round(
                         (progressEvent.loaded * 100) / progressEvent.total,
                     );
-                    console.log(percentCompleted);
+                    //console.log(percentCompleted);
                     setUploadProgress(percentCompleted);
                 },
             })

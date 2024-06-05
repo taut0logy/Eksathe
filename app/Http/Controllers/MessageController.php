@@ -50,9 +50,9 @@ class MessageController extends BaseController
 
     public function store(StoreMesageRequest $request)
     {
-        Log::info('Request:', $request->all());
+        //Log::info('Request:', $request->all());
         $data = $request->validated();
-        Log::info('Validated Data:', $data);
+        //Log::info('Validated Data:', $data);
         $data['sender_id'] = auth()->id();
         $receiverId = $data['receiver_id'] ?? null;
         $serverId = $data['server_id'] ?? null;
@@ -95,7 +95,7 @@ class MessageController extends BaseController
         $conversation = null;
         $lastMessage = null;
 
-        if($message->is_server) {
+        if($message->server_id) {
             $server = Server::where('last_message_id', $message->id)->first();
         } else {
             $conversation = Conversation::where('last_message_id', $message->id)->first();

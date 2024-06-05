@@ -28,7 +28,7 @@ export default function ServerModal({ show = false, onClose = () => {} }) {
 
     const createOrUpdateServer = (e) => {
         e.preventDefault();
-
+        //console.log(data);
         if (server.id) {
             put(route("server.update", server.id), {
                 data,
@@ -37,6 +37,7 @@ export default function ServerModal({ show = false, onClose = () => {} }) {
                         message: "Server updated successfully",
                         type: "success",
                     });
+                    //emit("server.updated", data);
                     onCloseModal();
                 },
             });
@@ -110,7 +111,7 @@ export default function ServerModal({ show = false, onClose = () => {} }) {
                         id="description"
                         rows="3"
                         className="mt-1 block w-full"
-                        placeholder="Enter server description" 
+                        placeholder="Enter server description"
                         value={data.description || ""}
                         onChange={(e) => setData("description", e.target.value)}
                     />

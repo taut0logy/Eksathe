@@ -11,7 +11,7 @@ class UpdateServerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class UpdateServerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'description' => 'nullable|string',
+            'user_ids' => 'nullable|array',
+            'user_ids.*' => 'integer|exists:users,id',
         ];
+    }
+
+    public function validated($key = null, $default = null) : array
+    {
+        $validated = parent::validated($key, $default);
+        $validated['owner_id'] = $this->user()->id;
+        return $validated;
     }
 }

@@ -26,7 +26,7 @@ export default function UserPicker({ value, options, onSelect }) {
 
     return (
         <>
-            <Combobox value={selected} onChange={setSelected} multiple>
+            <Combobox value={selected} onChange={onSelected} multiple>
                 <div className="relative mt-1">
                     <div
                         className="reIative w-full cursor-default overflow-hidden rounded-Ig
@@ -115,7 +115,7 @@ export default function UserPicker({ value, options, onSelect }) {
             </Combobox>
             {
                 selected && (
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex flex-wrap gap-2 mt-3">
                         {
                             selected.map((person) => (
                                 <div key={person.id} className="badge badge-primary gap-2">

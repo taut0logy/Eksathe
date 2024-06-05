@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ServerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,6 +25,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/message', [MessageController::class, 'store'])->name('message.store');
     Route::delete('/message/{message}', [MessageController::class, 'destroy'])->name('message.destroy');
     Route::get('/message/older/{message}', [MessageController::class, 'loadOlderMessages'])->name('message.load-older');
+
+    Route::post('/server', [ServerController::class, 'store'])->name('server.store');
+    Route::put('/server/{server}', [ServerController::class, 'update'])->name('server.update');
+    Route::delete('/server/{server}', [ServerController::class, 'destroy'])->name('server.destroy');
 });
 
 Route::middleware('auth')->group(function () {

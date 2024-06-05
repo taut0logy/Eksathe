@@ -30,7 +30,7 @@ export default function Authenticated({ header, children }) {
                     console.log(channel, error);
                 })
                 .listen('SocketMessage',(e)=>{
-                    console.log('SocketMessage',e);
+                    //console.log('SocketMessage',e);
                     const message=e.message;
                     emit("message.created",message);
                     if(message.sender_id===user.id) {
@@ -46,6 +46,20 @@ export default function Authenticated({ header, children }) {
                         }`
                     });
                 });
+
+            if (element.is_server) {
+                //console.log(`server.deleted.${element.id}`);
+                Echo.private(`server.deleted.${element.id}`)
+                    .error((error) => {
+                        //debugger;
+                        console.error(`server.deleted.${element.id}`, error);
+                    })
+                    .listen('ServerDeleted',(e)=>{
+                        //console.log('ServerDeleted',e);
+                        //debugger;
+                        emit("server.deleted", {id: e.id, name: e.name});
+                    });
+            }
         });
 
         return () => {
@@ -57,9 +71,15 @@ export default function Authenticated({ header, children }) {
                     ].sort((a, b)=>a-b).join('-')}`;
                 }
                 Echo.leave(channel);
+
+                if(element.is_server) {
+                    //console.log(`server.deleted.${element.id}`);
+                    Echo.leave(`server.deleted.${element.id}`);
+                }
             });
         }
     },[conversations])
+
     return (
         <>
         <div className="flex flex-col h-screen min-h-screen  ">
@@ -118,7 +138,7 @@ export default function Authenticated({ header, children }) {
                         <div className="flex items-center -me-2 sm:hidden">
                             <button
                                 onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 text-gray-400 transition duration-150 ease-in-out rounded-md dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400"
+                                className="inline-flex items-center justify-center p-2 transition duration-150 ease-in-out rounded-md hover:text-accent-content hover:bg-accent focus:outline-none focus:bg-neutral focus:text-accent"
                             >
                                 <svg className="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
@@ -144,14 +164,14 @@ export default function Authenticated({ header, children }) {
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
+                            Conversations
                         </ResponsiveNavLink>
                     </div>
 
-                    <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                    <div className="pt-4 pb-1 border-t border-primary">
                         <div className="px-4">
-                            <div className="text-base font-medium text-gray-800 dark:text-gray-200">{user.name}</div>
-                            <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                            <div className="text-base font-medium text-primary">{user.name}</div>
+                            <div className="text-sm font-medium">{user.email}</div>
                         </div>
 
                         <div className="mt-3 space-y-1">

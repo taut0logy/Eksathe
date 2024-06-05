@@ -20,7 +20,14 @@ export default function ConversationHeader({selectedConversation}) {
     //         setIsOnline(data.includes(selectedConversation.id.toString()));
     //         //console.log("online users", data,  isOnline);
     //     });
+
+    //     on('server.updated', (server) => {
+    //         //emit('toast.show', { message: "Server updated successfully", type: 'success' });
+    //         console.log("server updated", server);
+    //     });
     // }, [on]);
+
+
 
     const onServerDelete = () => {
         if(!window.confirm("Are you sure you want to delete this server?")){
@@ -29,8 +36,9 @@ export default function ConversationHeader({selectedConversation}) {
 
         axios.delete(route('server.destroy', selectedConversation.id))
             .then((response) => {
-                console.log("deleted", response.data);
-                emit('server.deleted', selectedConversation.id);
+                //console.log("deleted", response.data);
+                emit('toast.show', { message: response.data.message, type: 'info' });
+                //emit('server.deleted', selectedConversation.id);
             })
             .catch((error) => {
                 console.log(error);
@@ -40,7 +48,7 @@ export default function ConversationHeader({selectedConversation}) {
     return (
         <>
             {selectedConversation && (
-                <div className="flex items-center justify-between p-3 shadow-md shadow-grey-800 bg-neutral">
+                <div className="flex items-center justify-between p-3 shadow-lg shadow-grey-800 bg-neutral z-20">
                     <div className={"flex items-center gap-3"}>
                         <Link
                             href={route("dashboard")}
@@ -82,7 +90,7 @@ export default function ConversationHeader({selectedConversation}) {
                                     <div className="tooltip tooltip-left"
                                     data-tip="Delete Server">
                                         <button className="text-primary hover:text-accent"
-                                        onClick={(e) => onServerDelete}
+                                        onClick={(e) => onServerDelete()}
                                         >
                                             <TrashIcon className=" w-6 h-6"/>
                                         </button>
