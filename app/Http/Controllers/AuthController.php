@@ -30,6 +30,12 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
+        $user = User::where('email', $request->email)->first();
+
+        if($user && $user->blocked_at) {
+            return redirect()->back()->withErrors(['email'=> 'Sorry, you have been banned from using this platform.']);
+        }
+
         if(Auth::attempt($credentials, $remember)){
             $user = User::where('email', $credentials['email'])->first();
             $request->session()->put('user_id', $user->id);
@@ -37,7 +43,7 @@ class AuthController extends Controller
             $request->session()->put('user_name', $user->name);
             $user->update(['last_login_at' => now()]);
 
-            return redirect()->intended(route('dashboard'))->with('message', 'Login Successful. Welcome ' . $user->name . '!');
+            return redirect()->intended(route('dashboard'))->with('success', 'Login Successful. Welcome ' . $user->name . '!');
         }
 
 
@@ -95,7 +101,7 @@ class AuthController extends Controller
     {
         $request->fulfill();
 
-        return redirect('/');
+        return redirect('/')->with('success', 'Email Verified');
     }
 
     public function forgotPassword(Request $request)
@@ -116,7 +122,7 @@ class AuthController extends Controller
                 $message->to($request->email)->subject('Reset Password');
             });
         }
-        return redirect('login')->with('status', 'Password Reset Link Sent. Please check your email');
+        return redirect('login')->with('success', 'Password Reset Link Sent. Please check your email');
     }
 
     public function newPassword(Request $request)
@@ -128,9 +134,9 @@ class AuthController extends Controller
         if ($data) {
             User::where('email', $data->email)->update(['password' => bcrypt($request->password)]);
             DB::table('password_reset_tokens')->where('token', $request->token)->delete();
-            return redirect('login')->with('message', 'Password Changed Successfully');
+            return redirect('login')->with('success', 'Password Changed Successfully');
         } else {
-            return redirect('forgot-password')->with('message-error', 'An Unexpected Error Occurred');
+            return redirect('forgot-password')->with('error', 'An Unexpected Error Occurred');
         }
     }
 
@@ -141,7 +147,7 @@ class AuthController extends Controller
             'password' => $request->password
         ])) {
             $request->session()->put('auth.password_confirmed_at', time());
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('dashboard'))->with('success', 'Password Confirmed');
         }
         throw ValidationException::withMessages([
             'password' => [__('auth.password'),],
@@ -191,7 +197,7 @@ class AuthController extends Controller
         $request->session()->put('user_name', $user->name);
         $user->update(['last_login_at' => now()]);
 
-        return redirect('/')->with('status', 'Registration Successful. Welcome ' . $user->name . '!');
+        return redirect('/')->with('success', 'Registration Successful. Welcome ' . $user->name . '!');
     }
 
     public function loginPage()
@@ -200,19 +206,30 @@ class AuthController extends Controller
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('forgot-password'),
             'status' => session('status'),
+            'success' => session('success'),
+            'error' => session('error'),
+            'info' => session('info'),
         ]);
     }
 
     public function registerPage()
     {
         //return view('Auth.register');
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'status' => session('status'),
+            'success' => session('success'),
+            'error' => session('error'),
+            'info' => session('info'),
+        ]);
     }
 
     public function verifyEmailPage()
     {
         return Inertia::render('Auth/VerifyEmail', [
             'status' => session('status'),
+            'success' => session('success'),
+            'error' => session('error'),
+            'info' => session('info'),
         ]);
     }
 
@@ -221,6 +238,9 @@ class AuthController extends Controller
         //return view('Auth.forgotPassword');
         return Inertia::render('Auth/ForgotPassword', [
             'status' => session('status'),
+            'success' => session('success'),
+            'error' => session('error'),
+            'info' => session('info'),
         ]);
     }
 
@@ -229,12 +249,17 @@ class AuthController extends Controller
         $token = $_GET['token'];
         //return view('Auth.newPassword', ['token' => $token]);
         return Inertia::render('Auth/ResetPassword', [
-            'token' => $token
+            'token' => $token,
         ]);
     }
 
     public function confirmPasswordPage()
     {
-        return Inertia::render('Auth/ConfirmPassword');
+        return Inertia::render('Auth/ConfirmPassword', [
+            'status' => session('status'),
+            'success' => session('success'),
+            'error' => session('error'),
+            'info' => session('info'),
+        ]);
     }
 }

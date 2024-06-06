@@ -1,7 +1,7 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link, Head } from '@inertiajs/react';
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth, laravelVersion, phpVersion, success, error}) {
     const handleImageError = () => {
         document.getElementById('screenshot-container')?.classList.add('!hidden');
         document.getElementById('docs-card')?.classList.add('!row-span-1');
@@ -12,6 +12,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     return (
         <>
             <Head title="Welcome" />
+            {success && <div className="mb-4 font-medium text-sm text-success">{success}</div>}
+            {error && <div className="mb-4 font-medium text-sm text-error">{error}</div>}
             <div className="">
 
                 <div className="relative min-h-screen flex flex-col items-center justify-between selection:bg-[#FF2D20] selection:text-white">

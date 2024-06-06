@@ -11,7 +11,7 @@ import Toast from '@/Components/App/Toast';
 import NewMessageNotification from '@/Components/App/NewMessageNotification';
 //import { route } from 'ziggy-js';
 
-export default function Authenticated({ header, children }) {
+export default function Authenticated({ header, children , success, error, info}) {
     const page = usePage();
     const user=page.props.auth.user;
     const conversations=page.props.conversations;
@@ -61,6 +61,18 @@ export default function Authenticated({ header, children }) {
                     });
             }
         });
+
+        if(success) {
+            emit("toast.show", {type: "success", message: success});
+        }
+
+        if(error) {
+            emit("toast.show", {type: "error", message: error});
+        }
+
+        if(info) {
+            emit("toast.show", {type: "info", message: info});
+        }
 
         return () => {
             conversations.forEach(element => {

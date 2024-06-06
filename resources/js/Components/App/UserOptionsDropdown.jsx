@@ -1,32 +1,51 @@
 import {Menu, Transition} from '@headlessui/react'
 import {Fragment} from "react";
+import axios from "axios";
+import { useEventBus } from '@/EventBus';
 import {EllipsisVerticalIcon, LockClosedIcon, LockOpenIcon, ShieldCheckIcon, UserIcon} from "@heroicons/react/24/solid/index.js";
 
 export default function UserOptionsDropdown({conversation}) {
+    const { emit } = useEventBus();
     const changeUserRole = () => {
-         console.log('changeUserRole from' + conversation.id);
-         if(conversation.is_admin) {
-             axios.post(route('user.changeRole', conversation))
+         console.log('changeUserRole from ' + conversation.id);
+         if(conversation.is_user) {
+             axios.post(route('user.change-role', conversation))
                  .then((response) => {
                      console.log(response.data);
+                     emit('toast.show', {
+                            message: response.data.message,
+                            type: 'success'
+                        });
                  })
                  .catch((error) => {
                      console.log(error);
+                     emit('toast.show', {
+                        message: error.data.message,
+                        type: 'error'
+                    });
                  })
          }
     }
 
     const onBlockUser=() => {
-        console.log('onBlockUser from' + conversation.id);
+        console.log('onBlockUser from ' + conversation.id);
         if(!conversation.is_user) {
             return;
         }
-        axios.post(route('user.blockUnblock', conversation))
+        axios.post(route('user.block-unblock', conversation))
             .then((response) => {
                 console.log(response.data);
+                emit('toast.show', {
+                    message: response.data.message,
+                    type: 'success'
+                });
             })
             .catch((error) => {
                 console.log(error);
+                emit('toast.show', {
+                    message: error.data.message,
+                    type: 'error'
+                });
             })
     }
 

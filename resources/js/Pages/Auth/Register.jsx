@@ -8,7 +8,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import { PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function Register() {
+export default function Register({status, success, info, error, canResetPassword}) {
     const [avatar, setAvatar] = useState(null);
 
     const clearAvatar = () => {
@@ -56,6 +56,11 @@ export default function Register() {
     return (
         <GuestLayout logo = {false}>
             <Head title="Register" />
+
+            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
+            {success && <div className="mb-4 font-medium text-sm text-success">{success}</div>}
+            {error && <div className="mb-4 font-medium text-sm text-error">{error}</div>}
+            {info && <div className="mb-4 font-medium text-sm text-info">{info}</div>}
 
             <form onSubmit={submit} >
 

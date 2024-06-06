@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServerController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,9 +16,9 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('welcome');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'banned'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get("/user/{user}", [MessageController::class, 'messagesByUser'])->name('chat.user');
@@ -29,6 +30,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/server', [ServerController::class, 'store'])->name('server.store');
     Route::put('/server/{server}', [ServerController::class, 'update'])->name('server.update');
     Route::delete('/server/{server}', [ServerController::class, 'destroy'])->name('server.destroy');
+
+    Route::middleware('admin')->group(function(){
+        Route::post('/user/{user}/change-role', [UserController::class, 'changeRole'])->name('user.change-role');
+        Route::post('/user/{user}/block-unblock', [UserController::class, 'blockUnblockUser'])->name('user.block-unblock');
+    });
+
 });
 
 Route::middleware('auth')->group(function () {
