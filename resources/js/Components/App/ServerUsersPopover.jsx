@@ -8,6 +8,9 @@ import { useState } from "react";
 
 export default function ServerUsersPopover({ users = [] }) {
     const [curUsers, setUsers] = useState(users);
+    users.sort((a, b) => {
+        a.name.localeCompare(b.name);
+    });
     const onSearch = (e) => {
         const value = e.target.value.toLowerCase();
         if (!value || value == "") {

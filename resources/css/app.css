@@ -4,7 +4,7 @@
 
 #app {
     height: 100vh;
-    overflow-y: scroll;
+
 }
 .conversation-item .avatar.online::before,
 .conversation-item .avatar.offline::before {
@@ -14,10 +14,10 @@
     right: 1%;
     outline-width: 1px;
 }
+
 /* width */
 ::-webkit-scrollbar {
-    width: 8px;
-
+    width: 5px;
 }
 
 /* Track */
@@ -35,7 +35,7 @@
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--fallback-p,oklch(var(--a)));
 }
 
 .EmojiPickerReact.epr-dark-theme {
@@ -61,9 +61,9 @@
 
 }
 
-.chat-bubble {
+/* .chat-bubble {
     max-width: 30rem;
-}
+} */
 
 .chat-message-content > blockquote,
 .chat-message-content > dl,

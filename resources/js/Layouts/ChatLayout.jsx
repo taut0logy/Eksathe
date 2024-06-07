@@ -18,10 +18,16 @@ export default function ChatLayout({ children }) {
     const [showServerModal, setShowServerModal] = useState(false);
 
     const selectedConversationRef = useRef(selectedConversation);
+    //const onlineUsersRef = useRef(onlineUsers);
 
     useEffect(() => {
         selectedConversationRef.current = selectedConversation;
     }, [selectedConversation]);
+
+    // useEffect(() => {
+    //     onlineUsersRef.current = onlineUsers;
+    //     emit("online.users", Object.keys(onlineUsers));
+    // }, [onlineUsers]);
 
     const onSearch = (e) => {
         const value = e.target.value.toLowerCase();
@@ -101,7 +107,7 @@ export default function ChatLayout({ children }) {
             emit("toast.show", { message: `Server "${name}" was deleted.`, type: "error" });
             console.log("selectedConversation and id", selectedConversationRef.current, id);
             if (selectedConversationRef.current && selectedConversationRef.current.id == id) {
-                console.log("selectedConversation deleted", selectedConversationRef.current);
+                //console.log("selectedConversation deleted", selectedConversationRef.current);
                 router.visit("/dashboard");
             }
         });
@@ -149,6 +155,8 @@ export default function ChatLayout({ children }) {
             .here((users) => {
                 const onlineUsersMap = Object.fromEntries(users.map((user) => [user.id, user]));
                 setOnlineUsers((prev) => {
+                    const newOnlineUsers = { ...prev, ...onlineUsersMap };
+                    emit("online.users", Object.keys(newOnlineUsers));
                     return { ...prev, ...onlineUsersMap };
                 });
             })
@@ -156,15 +164,16 @@ export default function ChatLayout({ children }) {
                 setOnlineUsers((prev) => {
                     const newOnlineUsers = { ...prev };
                     newOnlineUsers[user.id] = user;
+                    emit("online.users", Object.keys(newOnlineUsers));
                     return newOnlineUsers;
                 });
-                emit("online.users", Object.keys(onlineUsers));
             })
             .leaving((user) => {
                 console.log("leaving", user);
                 setOnlineUsers((prev) => {
                     const newOnlineUsers = { ...prev };
                     delete newOnlineUsers[user.id];
+                    emit("online.users", Object.keys(newOnlineUsers));
                     return newOnlineUsers;
                 });
             })
@@ -175,10 +184,6 @@ export default function ChatLayout({ children }) {
             Echo.leave("online");
         };
     }, []);
-
-    useEffect(() => {
-        emit("online.users", Object.keys(onlineUsers));
-    }, [onlineUsers]);
 
     return (
         <>

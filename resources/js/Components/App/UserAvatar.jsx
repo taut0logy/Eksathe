@@ -20,7 +20,7 @@
         useEffect(() => {
             on('online.users', (data) => {
                 setIsOnline(data.includes(user.id.toString()));
-                //console.log("online users", data,  isOnline, user.id);
+                console.log("online users", data,  isOnline, user.id);
             });
         }, [on, user.id]);
 

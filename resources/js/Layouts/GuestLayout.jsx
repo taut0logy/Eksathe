@@ -19,9 +19,9 @@ export default function Guest({ children, logo = true }) {
                             <ArrowLeftIcon className="w-6 h-6 text-primary hover:text-accent" />
                         </Link>
                     </div>
-                
 
-            <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-neutral shadow-md overflow-hidden sm:rounded-lg">
+
+            <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-neutral/80 text-neutral-content shadow-md overflow-hidden sm:rounded-lg">
                 {children}
             </div>
         </div>

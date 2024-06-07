@@ -81,12 +81,12 @@ export default function UserOptionsDropdown({conversation}) {
                                         {conversation.blocked_at && (
                                                 <span className={'text-green-500 flex'}>
                                                     <LockOpenIcon className={'w-4 h-4 mr-2'} />
-                                                    Unblock</span>
+                                                    Unban</span>
                                             )}
                                         {!conversation.blocked_at && (
                                             <span className={'text-red-500 flex'}>
                                                     <LockClosedIcon   className={'w-4 h-4 mr-2'} />
-                                                    Block</span>
+                                                    Ban</span>
                                         )}
                                     </button>
                                 )}

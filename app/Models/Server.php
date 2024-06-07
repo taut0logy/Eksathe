@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Http\Resources\UserResource;
 
 class Server extends Model
 {
@@ -55,6 +56,16 @@ class Server extends Model
 
     public function toConversationArray(): array
     {
+        $admins = $this->admins;
+        $adminsArray = [];
+        foreach ($admins as $admin) {
+            $adminsArray[] = new UserResource($admin);
+        }
+        $users = $this->users;
+        $usersArray = [];
+        foreach ($users as $user) {
+            $usersArray[] = new UserResource($user);
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -62,8 +73,8 @@ class Server extends Model
             'is_server' => true,
             'is_user' => false,
             'owner_id' => $this->owner_id,
-            'users' => $this->users,
-            'admins' => $this->admins,
+            'users' => $usersArray,
+            'admins' => $adminsArray,
             'users_ids' => $this->users->pluck('id'),
             'admins_ids' => $this->admins->pluck('id'),
             'created_at' => $this->created_at,

@@ -1,3 +1,4 @@
+import ThemeToggler from '@/Components/App/ThemeToggler';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link, Head } from '@inertiajs/react';
 
@@ -10,19 +11,19 @@ export default function Welcome({ auth, laravelVersion, phpVersion, success, err
     };
 
     return (
-        <>
+        <div className='h-screen overflow-y-scroll'>
             <Head title="Welcome" />
             {success && <div className="mb-4 font-medium text-sm text-success">{success}</div>}
             {error && <div className="mb-4 font-medium text-sm text-error">{error}</div>}
-            <div className="">
 
                 <div className="relative min-h-screen flex flex-col items-center justify-between selection:bg-[#FF2D20] selection:text-white">
                     <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                         <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                             <div className="flex lg:justify-center lg:col-start-2">
-                                <ApplicationLogo className="w-20 h-20 fill-current" />
+                                <ApplicationLogo className="w-20 h-20 xs:w-10 xs:h-10 fill-current" />
                             </div>
                             <nav className="-mx-3 flex flex-1 justify-end">
+                                <ThemeToggler  />
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
@@ -77,7 +78,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion, success, err
                         </footer>
                     </div>
                 </div>
-            </div>
-        </>
+
+        </div>
     );
 }

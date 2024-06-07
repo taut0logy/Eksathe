@@ -4,6 +4,7 @@ import UserAvatar from "@/Components/App/UserAvatar.jsx";
 import ServerAvatar from "@/Components/App/ServerAvatar.jsx";
 import ServerDetailPopover from "@/Components/App/ServerDetailPopover.jsx";
 import ServerUsersPopover from "@/Components/App/ServerUsersPopover.jsx";
+import UserPopover from "./UserPopover";
 import {useEventBus} from "@/EventBus";
 import { useEffect, useState } from "react";
 
@@ -48,7 +49,7 @@ export default function ConversationHeader({selectedConversation}) {
     return (
         <>
             {selectedConversation && (
-                <div className="flex items-center justify-between p-3 shadow-lg shadow-grey-800 bg-neutral z-20">
+                <div className="flex items-center justify-between p-3 shadow-lg shadow-grey-800 bg-neutral/80 text-neutral-content z-20">
                     <div className={"flex items-center gap-3"}>
                         <Link
                             href={route("dashboard")}
@@ -71,6 +72,9 @@ export default function ConversationHeader({selectedConversation}) {
                             )}
                         </div>
                     </div>
+                    {selectedConversation.is_user && (
+                        <UserPopover user={selectedConversation}/>
+                    )}
                     {selectedConversation.is_server && (
                         <div className="flex gap-3">
                             <ServerDetailPopover server={selectedConversation}/>
