@@ -7,6 +7,7 @@ import { formatMessageDateShort } from "@/helpers.jsx";
 export default function ConversationItem({
     conversation,
     selectedConversation = null,
+    isOnline
     //online = null,
 }) {
     const page = usePage();
@@ -43,7 +44,7 @@ export default function ConversationItem({
         >
             {conversation.is_server && <ServerAvatar />}
             {conversation.is_user && (
-                <UserAvatar user={conversation} />
+                <UserAvatar user={conversation} isOnline={isOnline} />
             )}
             <div
                 className={`flex-1 text-xs max-w-full overflow-hidden ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}

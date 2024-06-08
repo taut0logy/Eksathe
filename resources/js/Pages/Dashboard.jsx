@@ -3,14 +3,15 @@ import ChatLayout from "@/Layouts/ChatLayout.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline/index.js";
-//import ConversationItem from "@/Components/App/ConversationItem.jsx";
+// import ConversationItem from "@/Components/App/ConversationItem.jsx";
 import ConversationHeader from "@/Components/App/ConversationHeader.jsx";
 import MessageInput from "@/Components/App/MessageInput.jsx";
-import MessageItem from "@/Components/App/MesageItem.jsx";
+import MessageItem from "@/Components/App/MesageItem";
 import React from "react";
 import { useEventBus } from "@/EventBus";
 import axios from "axios";
 import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal";
+
 
 export default function Dashboard({
     selectedConversation = null,
@@ -23,7 +24,37 @@ export default function Dashboard({
     const loadMoreIntersector = useRef(null);
     const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
     const [previewAttachment, setPreviewAttachment] = useState({});
-    const { on } = useEventBus();
+    let { on, currentUsers, setCurrentUsers } = useEventBus();
+    useEffect(() => {
+        Echo.join("online")
+            .here((users) => {
+                const onlineUsersMap = Object.fromEntries(users.map((user) => [user.id, user]));
+                setCurrentUsers((prev) => {
+                    return { ...prev, ...onlineUsersMap };
+                });
+            })
+            .joining((user) => {
+                setCurrentUsers((prev) => {
+                    const newOnlineUsers = { ...prev };
+                    newOnlineUsers[user.id] = user;
+                    return newOnlineUsers;
+                });
+            })
+            .leaving((user) => {
+                console.log("leaving", user);
+                setCurrentUsers((prev) => {
+                    const newOnlineUsers = { ...prev };
+                    delete newOnlineUsers[user.id];
+                    return newOnlineUsers;
+                });
+            })
+            .error((err) => {
+                console.log("ChatLayout error", err);
+            });
+        return () => {
+            Echo.leave("online");
+        };
+    }, []);
 
     const messageCreated = (message) => {
         if (
@@ -44,31 +75,24 @@ export default function Dashboard({
     };
 
     const messageDeleted = ({message}) => {
-        //console.log("message deleted", selectedConversation, message);
         if (
             (selectedConversation &&
                 selectedConversation.is_server &&
                 selectedConversation.id == message.server_id) ||
                 selectedConversation.id == message.receiver_id
         ) {
-
-            setLocalMessages((prev) => {
-                return prev.filter((m) => m.id !== message.id);
-            });
+            setLocalMessages((prev) => prev.filter((m) => m.id !== message.id));
         }
         if (
             selectedConversation &&
             selectedConversation.is_user &&
             selectedConversation.id === message.sender_id
         ) {
-            setLocalMessages((prev) => {
-                return prev.filter((m) => m.id !== message.id);
-            });
+            setLocalMessages((prev) => prev.filter((m) => m.id !== message.id));
         }
     }
 
     const loadMoreMessages = useCallback(() => {
-        //console.log("loadmoremessage")
         if (noMoreMessages) return;
         const messageId = localMessages[0].id;
         axios
@@ -88,7 +112,6 @@ export default function Dashboard({
                 setLocalMessages((prev) => {
                     let data2 = data.data.reverse();
 
-                    //delete any element from data that exists in prev
                     data2.forEach((message) => {
                         if (prev.some((m) => m.id === message.id)) {
                             data2 = data2.filter((m) => m.id !== message.id);
@@ -96,27 +119,19 @@ export default function Dashboard({
                     })
                     return [...data2, ...prev];
                 });
-
-
             });
     }, [localMessages, noMoreMessages]);
 
-
-
     const attachmentClick = (attachments, ind) => {
-        //console.log("attachment click", ind);
         setPreviewAttachment({attachments, ind});
         setShowAttachmentPreview(true);
-        //console.log("attachment click", previewAttachment);
     }
 
     useEffect(() => {
-        //console.log("messages change")
         setLocalMessages(messages ? messages.data.reverse() : []);
     }, [messages]);
 
     useEffect(() => {
-        //console.log("new conversation selected / new message write")
         setTimeout(() => {
             if (messagesCtrRef.current) {
                 messagesCtrRef.current.scrollTop =
@@ -133,10 +148,7 @@ export default function Dashboard({
         };
     }, [selectedConversation]);
 
-
-
     useEffect(() => {
-        //console.log("localMesssage scroll loadmoremessage")
         if (messagesCtrRef.current && scrollFromBottom !== null) {
             messagesCtrRef.current.scrollTop =
                 messagesCtrRef.current.scrollHeight -
@@ -194,6 +206,7 @@ export default function Dashboard({
                 <>
                     <ConversationHeader
                         selectedConversation={selectedConversation}
+                        isOnline={currentUsers[selectedConversation.id]?true:false}
                     />
                     <div
                         ref={messagesCtrRef}
@@ -221,6 +234,7 @@ export default function Dashboard({
                                         key={message.id}
                                         message={message}
                                         attachmentClick={attachmentClick}
+                                        isOnline={currentUsers[message.sender_id]?true:false}
                                     />
                                 ))}
                             </div>
@@ -245,7 +259,7 @@ export default function Dashboard({
 Dashboard.layout = (page) => {
     return (
         <AuthenticatedLayout user={page.props.auth.user}>
-            <ChatLayout>{page}</ChatLayout>
+            <ChatLayout >{page}</ChatLayout>
         </AuthenticatedLayout>
     );
 };

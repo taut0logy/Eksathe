@@ -9,11 +9,11 @@ import {useEventBus} from "@/EventBus";
 import { useEffect, useState } from "react";
 
 
-export default function ConversationHeader({selectedConversation}) {
+export default function ConversationHeader({selectedConversation, isOnline}) {
 
     const page = usePage();
     const user = page.props.auth.user;
-    const { on, emit } = useEventBus();
+    const { emit } = useEventBus();
 //    const [isOnline, setIsOnline] = useState(false);
 
     // useEffect(() => {
@@ -58,7 +58,7 @@ export default function ConversationHeader({selectedConversation}) {
                             <ArrowLeftIcon className="w-6"/>
                         </Link>
                         {selectedConversation.is_user && (
-                            <UserAvatar user={selectedConversation} />
+                            <UserAvatar user={selectedConversation} isOnline={isOnline} />
                         )}
                         {selectedConversation.is_server && (
                             <ServerAvatar />

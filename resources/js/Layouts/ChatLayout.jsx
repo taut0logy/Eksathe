@@ -9,25 +9,17 @@ import ServerModal from "@/Components/App/ServerModal";
 
 export default function ChatLayout({ children }) {
     const page = usePage();
-    const { on, emit } = useEventBus();
+    const { on, emit, currentUsers } = useEventBus();
     const conversations = page.props.conversations;
     const selectedConversation = page.props.selectedConversation;
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
-    const [onlineUsers, setOnlineUsers] = useState({});
     const [showServerModal, setShowServerModal] = useState(false);
-
     const selectedConversationRef = useRef(selectedConversation);
-    //const onlineUsersRef = useRef(onlineUsers);
 
     useEffect(() => {
         selectedConversationRef.current = selectedConversation;
     }, [selectedConversation]);
-
-    // useEffect(() => {
-    //     onlineUsersRef.current = onlineUsers;
-    //     emit("online.users", Object.keys(onlineUsers));
-    // }, [onlineUsers]);
 
     const onSearch = (e) => {
         const value = e.target.value.toLowerCase();
@@ -150,41 +142,6 @@ export default function ChatLayout({ children }) {
         );
     }, [localConversations]);
 
-    useEffect(() => {
-        Echo.join("online")
-            .here((users) => {
-                const onlineUsersMap = Object.fromEntries(users.map((user) => [user.id, user]));
-                setOnlineUsers((prev) => {
-                    const newOnlineUsers = { ...prev, ...onlineUsersMap };
-                    emit("online.users", Object.keys(newOnlineUsers));
-                    return { ...prev, ...onlineUsersMap };
-                });
-            })
-            .joining((user) => {
-                setOnlineUsers((prev) => {
-                    const newOnlineUsers = { ...prev };
-                    newOnlineUsers[user.id] = user;
-                    emit("online.users", Object.keys(newOnlineUsers));
-                    return newOnlineUsers;
-                });
-            })
-            .leaving((user) => {
-                console.log("leaving", user);
-                setOnlineUsers((prev) => {
-                    const newOnlineUsers = { ...prev };
-                    delete newOnlineUsers[user.id];
-                    emit("online.users", Object.keys(newOnlineUsers));
-                    return newOnlineUsers;
-                });
-            })
-            .error((err) => {
-                console.log("ChatLayout error", err);
-            });
-        return () => {
-            Echo.leave("online");
-        };
-    }, []);
-
     return (
         <>
             <div className="flex flex-1 w-full overflow-hidden ">
@@ -210,6 +167,7 @@ export default function ChatLayout({ children }) {
                                     key={`${conversation.is_server ? "server_" : "user_"}${conversation.id}`}
                                     conversation={conversation}
                                     selectedConversation={selectedConversation}
+                                    isOnline={currentUsers[conversation.id]?true:false}
                                 />
                             ))}
                     </div>

@@ -4,6 +4,7 @@ export const EventBusContext = React.createContext();
 
 export const EventBusProvider = ({ children }) => {
     const [events, setEvents] = React.useState({});
+    const [currentUsers, setCurrentUsers] = React.useState({});
 
     const emit = (event, data) => {
         if(events[event]) {
@@ -49,7 +50,7 @@ export const EventBusProvider = ({ children }) => {
     }
 
     return (
-        <EventBusContext.Provider value={{ emit, on, off, offAll, stayOn, offCallback }}>
+        <EventBusContext.Provider value={{ emit, on, off, offAll, stayOn, offCallback, currentUsers, setCurrentUsers }}>
             {children}
         </EventBusContext.Provider>
     )

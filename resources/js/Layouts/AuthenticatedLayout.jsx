@@ -10,7 +10,6 @@ import { useEventBus } from "@/EventBus";
 import Toast from "@/Components/App/Toast";
 import NewMessageNotification from "@/Components/App/NewMessageNotification";
 import ThemeToggler from "@/Components/App/ThemeToggler";
-//import { route } from 'ziggy-js';
 
 export default function Authenticated({
     header,
@@ -25,6 +24,7 @@ export default function Authenticated({
     const { emit } = useEventBus();
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
     useEffect(() => {
         conversations.forEach((element) => {
             let channel = `message.server.${element.id}`;
