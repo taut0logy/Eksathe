@@ -37,9 +37,9 @@ export default function MessageItem({message, attachmentClick, isOnline}) {
         code: ({ node, inline, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
             return !inline && match ? (
-                <SyntaxHighlighter style={materialDark} language={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} {...props} />
+                <SyntaxHighlighter className='rounded-md' style={materialDark} language={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} {...props} />
             ) : (
-                <code className={className} {...props} />
+                <code className={className + 'rounded-md'} {...props} />
             );
         }
     };
@@ -53,7 +53,7 @@ export default function MessageItem({message, attachmentClick, isOnline}) {
                 {!isMe ?message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
-            <div className={"chat-bubble max-w-lg relative pb-4 " + (isMe ? "chat-bubble-neutral " : "bg-info/70 text-info-content")}>
+            <div className={"chat-bubble lg:max-w-md relative pb-4 " + (isMe ? "chat-bubble-neutral " : "bg-info/70 text-info-content")}>
                 {
                     message.sender_id === curUser.id && (
                         <MessageOptionsDropdown message={message} />
@@ -61,7 +61,7 @@ export default function MessageItem({message, attachmentClick, isOnline}) {
                 }
                 <div className={"chat-message"}>
                     <div className={"chat-message-content"} >
-                        <ReactMarkdown components = {components}>
+                        <ReactMarkdown components = {components} className="rounded-md">
                             {message.body && convertLinksToMarkdown(message.body)}
                         </ReactMarkdown>
                         <MessageAttachments

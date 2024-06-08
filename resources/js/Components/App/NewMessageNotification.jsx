@@ -32,7 +32,7 @@ export default function  NewMessageNotification({}) {
     }, [on]);
 
     return (
-        <div className="toast toast-top toast-center min-w-[240px]">
+        <div className="toast toast-top toast-center min-w-[240px] z-[100]">
             {toasts.map((toast, index) => (
                 <div key={toast.id}
                 className="alert alert-success py-3 px-4 rounded-md">

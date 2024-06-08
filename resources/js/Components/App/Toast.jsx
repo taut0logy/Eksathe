@@ -26,7 +26,7 @@ export default function  Toast() {
     });
 
     return (
-        <div className="toast toast-top toast-center z-[1000] w-full xs:w-auto">
+        <div className="toast toast-top toast-center z-[100] w-full xs:w-auto">
             {toasts.map((toast, index) => (
                 <div key={toast.id}
                 className={`alert py-3 px-4 rounded-md ${
