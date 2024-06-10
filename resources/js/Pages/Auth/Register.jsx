@@ -5,7 +5,6 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Inertia } from '@inertiajs/inertia';
 import { PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 export default function Register({status, success, info, error, canResetPassword}) {
@@ -14,6 +13,7 @@ export default function Register({status, success, info, error, canResetPassword
     const clearAvatar = () => {
         setAvatar(null);
     };
+    
     const { data, setData, post, processing, errors, reset } = useForm({
         profile_photo: null,
         username: '',
@@ -35,22 +35,6 @@ export default function Register({status, success, info, error, canResetPassword
     const submit = (e) => {
         e.preventDefault();
         post(route('register'));
-        // const formData = new FormData();
-        // Object.entries(data).forEach(([key, value]) => {
-        //     formData.append(key, value);
-        // });
-
-        // if(file instanceof File) {
-        //     formData.append('profile_photo', file);
-        // }
-        // //console.log(formData);
-        // //log the data in file
-
-        // //console.log(profile_photo);
-        // Inertia.post(route('register'), formData, {
-        //     onSuccess: () => reset('password', 'password_confirmation'),
-        //     forceFormData: true
-        // });
     };
 
     return (
@@ -85,6 +69,7 @@ export default function Register({status, success, info, error, canResetPassword
                         )}
                         <input
                             type="file"
+                            accept={"image/*"}
                             id="profile_photo"
                             name="profile_photo"
                             className="w-40 h-40 absolute top-0 left-0 rounded-full opacity-0 overflow-hidden shadow-lg cursor-pointer"
