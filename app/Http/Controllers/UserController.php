@@ -23,21 +23,21 @@ class UserController extends Controller
 
         Mail::send(new UserAdmin($user));
 
-        $message = $user->is_admin ? 'User "'.$user->name. '" is now an admin' : 'User "'.$user->name. '" is no longer an admin';
+        $message = $user->is_admin ? 'User "' . $user->name . '" is now an admin' : 'User "' . $user->name . '" is no longer an admin';
         //Log::info("after change role",["message"=>$message]);
         return response()->json(['message' => $message]);
     }
 
-    public function blockUnblockUser(User $user)
+    public function banUnbanUser(User $user)
     {
-        if($user->blocked_at) {
+        if ($user->blocked_at) {
             $user->blocked_at = null;
 
-            $message = 'User "'.$user->name. '" is now unblocked';
+            $message = 'User "' . $user->name . '" is now unbanned from the platform';
         } else {
             $user->blocked_at = now();
 
-            $message = 'User "'.$user->name. '" is now blocked';
+            $message = 'User "' . $user->name . '" is now banned from the platform';
         }
         $user->update();
 

@@ -31,11 +31,10 @@ Route::middleware(['auth', 'verified', 'banned'])->group(function () {
     Route::put('/server/{server}', [ServerController::class, 'update'])->name('server.update');
     Route::delete('/server/{server}', [ServerController::class, 'destroy'])->name('server.destroy');
 
-    Route::middleware('admin')->group(function(){
+    Route::middleware('admin')->group(function () {
         Route::post('/user/{user}/change-role', [UserController::class, 'changeRole'])->name('user.change-role');
-        Route::post('/user/{user}/block-unblock', [UserController::class, 'blockUnblockUser'])->name('user.block-unblock');
+        Route::post('/user/{user}/ban-unban', [UserController::class, 'banUnbanUser'])->name('user.ban-unban');
     });
-
 });
 
 Route::middleware('auth')->group(function () {
@@ -44,8 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/mail' , function () {
+Route::get('/mail', function () {
     return view('Mails.reset-password');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

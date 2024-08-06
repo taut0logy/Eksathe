@@ -1,5 +1,6 @@
     import React from "react";
     import { useEventBus } from "@/EventBus";
+import { LazyLoadImage } from "react-lazy-load-image-component";
     export default function UserAvatar({user, profile=false, isOnline = null, className = ''}) {
         const { on } = useEventBus();
         const sizeClass = profile ? 'w-40 h-40' : 'w-8 h-8';
@@ -10,7 +11,7 @@
                 {user.profile_picture && (
                         <div className={`chat-image avatar ${onlineClass}'` + className}>
                             <div className={`rounded-full ${sizeClass}`}>
-                                <img src={user.profile_picture} alt="" />
+                                <LazyLoadImage src={user.profile_picture} alt={user.name}/>
                             </div>
                         </div>
                     )}

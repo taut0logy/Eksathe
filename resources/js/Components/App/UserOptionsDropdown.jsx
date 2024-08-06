@@ -28,13 +28,13 @@ export default function UserOptionsDropdown({conversation}) {
     }
 
     const onBlockUser=() => {
-        console.log('onBlockUser from ' + conversation.id);
+        //console.log('onBlockUser from ' + conversation.id);
         if(!conversation.is_user) {
             return;
         }
-        axios.post(route('user.block-unblock', conversation))
+        axios.post(route('user.ban-unban', conversation))
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 emit('toast.show', {
                     message: response.data.message,
                     type: 'success'
@@ -54,7 +54,7 @@ export default function UserOptionsDropdown({conversation}) {
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button
-                        className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-black/40">
+                        className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/40">
                         <EllipsisVerticalIcon className="w-5 h-5"/>
                     </Menu.Button>
                 </div>
@@ -68,8 +68,8 @@ export default function UserOptionsDropdown({conversation}) {
                     leaveTo="transform opacity-0 scale-95"
                 >
                     <Menu.Items
-                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1 px-1">
+                        className="absolute right-0 z-10 w-48 mt-2 origin-top-right bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="px-1 py-1">
                             <Menu.Item>
                                 {({active}) => (
                                     <button
@@ -92,7 +92,7 @@ export default function UserOptionsDropdown({conversation}) {
                                 )}
                             </Menu.Item>
                         </div>
-                        <div className="py-1 px-1">
+                        <div className="px-1 py-1">
                             <Menu.Item>
                                 {({active}) => (
                                     <button

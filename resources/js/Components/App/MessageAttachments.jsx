@@ -4,6 +4,7 @@ import {
     PlayCircleIcon,
 } from "@heroicons/react/24/solid";
 import { isAudio, isImage, isVideo, isPDF, isPreviewable } from "@/helpers";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 export default function MessageAttachments({ attachments, attachmentClick }) {
     return (
@@ -32,8 +33,9 @@ export default function MessageAttachments({ attachments, attachmentClick }) {
                                 </a>
                             )}
                             {isImage(attachment) && (
-                                <img
+                                <LazyLoadImage
                                     src={attachment.url}
+                                    
                                     className="object-cover border-2 border-gray-800 rounded-md aspect-square w-36 h-36"
                                 />
                             )}
@@ -41,12 +43,16 @@ export default function MessageAttachments({ attachments, attachmentClick }) {
                                 <div className="relative flex items-center justify-center rounded-md w-36">
                                     <PlayCircleIcon className="absolute z-20 w-16 h-16 text-white opacity-70" />
                                     <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
-                                    <video className="w-40 rounded-md" src={attachment.url}></video>
+                                    <video
+                                        className="w-40 rounded-md"
+                                        src={attachment.url}
+                                    ></video>
                                 </div>
                             )}
                             {isAudio(attachment) && (
                                 <div className="relative flex items-center justify-center">
-                                    <audio className="rounded-md"
+                                    <audio
+                                        className="rounded-md"
                                         src={attachment.url}
                                         controls
                                     ></audio>
@@ -62,9 +68,14 @@ export default function MessageAttachments({ attachments, attachmentClick }) {
                                         height="100%"
                                     >
                                         <p className="pt-10 text-center">
-                                            <small>Your browser does not support PDFs.<br /><a href={attachment.url}>
-                                                Download the PDF
-                                            </a></small>
+                                            <small>
+                                                Your browser does not support
+                                                PDFs.
+                                                <br />
+                                                <a href={attachment.url}>
+                                                    Download the PDF
+                                                </a>
+                                            </small>
                                             .
                                         </p>
                                     </object>

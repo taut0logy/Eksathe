@@ -28,7 +28,7 @@ class StoreMesageRequest extends FormRequest
             'server_id' => 'required_without:receiver_id|nullable|exists:servers,id',
             'receiver_id' => 'required_without:server_id|nullable|exists:users,id',
             'attachments' => 'nullable|array|max:10',
-            'attachments.*' => 'file|max:1024000',
+            'attachments.*' => 'file|max:102400',
         ];
     }
 }

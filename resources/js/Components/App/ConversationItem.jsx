@@ -7,7 +7,7 @@ import { formatMessageDateShort } from "@/helpers.jsx";
 export default function ConversationItem({
     conversation,
     selectedConversation = null,
-    isOnline
+    isOnline,
     //online = null,
 }) {
     const page = usePage();
@@ -47,32 +47,55 @@ export default function ConversationItem({
                 <UserAvatar user={conversation} isOnline={isOnline} />
             )}
             <div
-                className={`flex-1 text-xs max-w-full overflow-hidden ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
+                className={`flex-1 text-xs max-w-full overflow-hidden ${
+                    conversation.is_user && conversation.blocked_at
+                        ? "opacity-60"
+                        : ""
+                }`}
             >
                 <div className="flex items-center justify-between gap-1">
                     <h3
-                        className={`text-sm font-semibold overflow-hidden text-nowrap text-ellipsis ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
+                        className={`text-sm font-semibold overflow-hidden text-nowrap text-ellipsis ${
+                            conversation.is_user && conversation.blocked_at
+                                ? "opacity-60"
+                                : ""
+                        }`}
                     >
                         {conversation.name}
                     </h3>
                     {conversation.last_message_at && (
-                        <span className={"text-nowrap"}>
+                        <span className={"text-nowrap font-bold"}>
                             {formatMessageDateShort(
-                                conversation.last_message_at,
+                                conversation.last_message_at
                             )}
                         </span>
                     )}
                 </div>
-                {conversation.last_message && (
+                {conversation.last_message_at && (
                     <p
-                        className={`text-nowrap text-xs overflow-hidden text-ellipsis ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
+                        className={`text-nowrap text-xs overflow-hidden text-ellipsis ${
+                            conversation.is_user && conversation.blocked_at
+                                ? "opacity-60"
+                                : ""
+                        }`}
                     >
-                        {conversation.last_message && (conversation.last_message.sender_id === user.id ? "You: " : "") + (conversation.last_message===null ? "Attachment" : conversation.last_message)}
+                        <b>
+                            {conversation.last_sender_id === user.id
+                                ? "You: "
+                                : conversation.last_sender_name + ": "}
+                        </b>
+                        {conversation.last_message === null
+                            ? "(Attachments)"
+                            : conversation.last_message}
                     </p>
                 )}
-                {!conversation.last_message && (
+                {!conversation.last_message_at && (
                     <p
-                        className={`text-nowrap text-xs overflow-hidden text-ellipsis ${conversation.is_user && conversation.blocked_at ? "opacity-60" : ""}`}
+                        className={`text-nowrap text-xs overflow-hidden text-ellipsis ${
+                            conversation.is_user && conversation.blocked_at
+                                ? "opacity-60"
+                                : ""
+                        }`}
                     >
                         {"(No messages yet)"}
                     </p>

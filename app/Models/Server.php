@@ -45,10 +45,12 @@ class Server extends Model
         return $this->belongsTo(Message::class, 'last_message_id');
     }
 
-    public static function getServersFor(User $user) {
-        return self::select(['servers.*','messages.body as last_message','messages.created_at as last_message_at'])
+    public static function getServersFor(User $user)
+    {
+        return self::select(['servers.*', 'messages.body as last_message', 'messages.created_at as last_message_at', 'messages.sender_id as last_sender_id', 'last_sender.name as last_sender_name'])
             ->join('server_users', 'server_users.server_id', '=', 'servers.id')
             ->leftJoin('messages', 'messages.id', '=', 'servers.last_message_id')
+            ->leftJoin('users as last_sender', 'last_sender.id', '=', 'messages.sender_id')
             ->where('server_users.user_id', '=', $user->id)
             ->orderBy('messages.created_at', 'desc')
             ->orderBy('servers.name')->get();
@@ -80,8 +82,10 @@ class Server extends Model
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'last_message_at' => $this->last_message_at,
-            'last_message' => $this->last_message
-            ];
+            'last_message' => $this->last_message,
+            'last_sender_id' => $this->last_sender_id,
+            'last_sender_name' => $this->last_sender_name
+        ];
     }
 
     public static function updateConvWithMessage($serverId, $Message)
