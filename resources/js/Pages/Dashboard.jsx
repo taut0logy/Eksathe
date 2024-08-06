@@ -3,7 +3,6 @@ import ChatLayout from "@/Layouts/ChatLayout.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline/index.js";
-// import ConversationItem from "@/Components/App/ConversationItem.jsx";
 import ConversationHeader from "@/Components/App/ConversationHeader.jsx";
 import MessageInput from "@/Components/App/MessageInput.jsx";
 import MessageItem from "@/Components/App/MesageItem";
@@ -11,7 +10,6 @@ import React from "react";
 import { useEventBus } from "@/EventBus";
 import axios from "axios";
 import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal";
-
 
 export default function Dashboard({
     selectedConversation = null,
@@ -28,7 +26,9 @@ export default function Dashboard({
     useEffect(() => {
         Echo.join("online")
             .here((users) => {
-                const onlineUsersMap = Object.fromEntries(users.map((user) => [user.id, user]));
+                const onlineUsersMap = Object.fromEntries(
+                    users.map((user) => [user.id, user]),
+                );
                 setCurrentUsers((prev) => {
                     return { ...prev, ...onlineUsersMap };
                 });
@@ -41,7 +41,7 @@ export default function Dashboard({
                 });
             })
             .leaving((user) => {
-                console.log("leaving", user);
+                //console.log("leaving", user);
                 setCurrentUsers((prev) => {
                     const newOnlineUsers = { ...prev };
                     delete newOnlineUsers[user.id];
@@ -58,28 +58,28 @@ export default function Dashboard({
 
     const messageCreated = (message) => {
         if (
-            (selectedConversation &&
-                selectedConversation.is_server &&
-                selectedConversation.id == message.server_id)
+            selectedConversation &&
+            selectedConversation.is_server &&
+            selectedConversation.id == message.server_id
         ) {
             setLocalMessages((prev) => [...prev, message]);
         }
         if (
             (selectedConversation &&
-            selectedConversation.is_user &&
-            selectedConversation.id === message.sender_id)  ||
+                selectedConversation.is_user &&
+                selectedConversation.id === message.sender_id) ||
             selectedConversation.id == message.receiver_id
         ) {
             setLocalMessages((prev) => [...prev, message]);
         }
     };
 
-    const messageDeleted = ({message}) => {
+    const messageDeleted = ({ message }) => {
         if (
             (selectedConversation &&
                 selectedConversation.is_server &&
                 selectedConversation.id == message.server_id) ||
-                selectedConversation.id == message.receiver_id
+            selectedConversation.id == message.receiver_id
         ) {
             setLocalMessages((prev) => prev.filter((m) => m.id !== message.id));
         }
@@ -90,15 +90,15 @@ export default function Dashboard({
         ) {
             setLocalMessages((prev) => prev.filter((m) => m.id !== message.id));
         }
-    }
+    };
 
     const loadMoreMessages = useCallback(() => {
         if (noMoreMessages) return;
         const messageId = localMessages[0].id;
         axios
             .get(route("message.load-older", messageId))
-            .then(({ data }) => {
-                if (data.data.length === 0) {
+            .then(({ data: response }) => {
+                if (response.data.length === 0) {
                     setNoMoreMessages(true);
                     return;
                 }
@@ -108,24 +108,28 @@ export default function Dashboard({
                 const clientHeight = messagesCtrRef.current.clientHeight;
                 const useHeight = scrollHeight - scrpollTop - clientHeight;
                 setScrollFromBottom(useHeight);
-
+                const data2 = response.data.reverse();
                 setLocalMessages((prev) => {
-                    let data2 = data.data.reverse();
-
-                    data2.forEach((message) => {
-                        if (prev.some((m) => m.id === message.id)) {
-                            data2 = data2.filter((m) => m.id !== message.id);
-                        }
-                    })
                     return [...data2, ...prev];
                 });
+                // setLocalMessages((prev) => {
+                //     console.log(data);
+                //     let data2 = data.data.reverse();
+
+                //     data2.forEach((message) => {
+                //         if (prev.some((m) => m.id === message.id)) {
+                //             data2 = data2.filter((m) => m.id !== message.id);
+                //         }
+                //     });
+                //     return [...data2, ...prev];
+                // });
             });
     }, [localMessages, noMoreMessages]);
 
     const attachmentClick = (attachments, ind) => {
-        setPreviewAttachment({attachments, ind});
+        setPreviewAttachment({ attachments, ind });
         setShowAttachmentPreview(true);
-    }
+    };
 
     useEffect(() => {
         setLocalMessages(messages ? messages.data.reverse() : []);
@@ -137,7 +141,7 @@ export default function Dashboard({
                 messagesCtrRef.current.scrollTop =
                     messagesCtrRef.current.scrollHeight;
             }
-        }, 10);
+        }, 100);
         setScrollFromBottom(0);
         setNoMoreMessages(false);
         const offCreated = on("message.created", messageCreated);
@@ -187,14 +191,9 @@ export default function Dashboard({
     return (
         <>
             <Head title="Conversations" />
-            <div></div>
             {!messages && (
                 <div className="flex flex-col items-center justify-center h-full text-center opacity-35">
-                    <div
-                        className={
-                            "text-2xl md:text-4xl p-5"
-                        }
-                    >
+                    <div className={"text-2xl md:text-4xl p-5"}>
                         Select a chat to see messages
                     </div>
                     <ChatBubbleLeftRightIcon
@@ -206,7 +205,9 @@ export default function Dashboard({
                 <>
                     <ConversationHeader
                         selectedConversation={selectedConversation}
-                        isOnline={currentUsers[selectedConversation.id]?true:false}
+                        isOnline={
+                            currentUsers[selectedConversation.id] ? true : false
+                        }
                     />
                     <div
                         ref={messagesCtrRef}
@@ -221,36 +222,46 @@ export default function Dashboard({
                         )}
                         {localMessages.length > 0 && (
                             <div className={"flex flex-col flex-1"}>
-                                {
-                                    noMoreMessages && (
-                                        <div className="text-center opacity-40 nowrap">
-                                            Beginning of chat
-                                        </div>
-                                    )
-                                }
+                                {noMoreMessages && (
+                                    <div className="text-center opacity-40 nowrap">
+                                        Beginning of chat
+                                    </div>
+                                )}
+                                {!noMoreMessages && (
+                                    <div
+                                        className={`flex items-center justify-center mt-3 cursor-pointer opacity-80`}
+                                    >
+                                        <span className="loading loading-dots loading-md"></span>
+                                        <span className={"text-md ml-2"}>
+                                            Loading older messages
+                                        </span>
+                                    </div>
+                                )}
                                 <div ref={loadMoreIntersector}></div>
                                 {localMessages.map((message) => (
                                     <MessageItem
                                         key={message.id}
                                         message={message}
                                         attachmentClick={attachmentClick}
-                                        isOnline={currentUsers[message.sender_id]?true:false}
+                                        isOnline={
+                                            currentUsers[message.sender_id]
+                                                ? true
+                                                : false
+                                        }
                                     />
                                 ))}
                             </div>
                         )}
                     </div>
                     <MessageInput conversation={selectedConversation} />
-                    {
-                        previewAttachment.attachments && (
-                            <AttachmentPreviewModal
-                                attachments={previewAttachment.attachments}
-                                index={previewAttachment.ind}
-                                show={showAttachmentPreview}
-                                onClose={() => setShowAttachmentPreview(false)}
-                                />
-                        )
-                    }
+                    {previewAttachment.attachments && (
+                        <AttachmentPreviewModal
+                            attachments={previewAttachment.attachments}
+                            index={previewAttachment.ind}
+                            show={showAttachmentPreview}
+                            onClose={() => setShowAttachmentPreview(false)}
+                        />
+                    )}
                 </>
             )}
         </>
@@ -259,7 +270,7 @@ export default function Dashboard({
 Dashboard.layout = (page) => {
     return (
         <AuthenticatedLayout user={page.props.auth.user}>
-            <ChatLayout >{page}</ChatLayout>
+            <ChatLayout>{page}</ChatLayout>
         </AuthenticatedLayout>
     );
 };

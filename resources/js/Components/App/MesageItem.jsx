@@ -53,7 +53,7 @@ export default function MessageItem({message, attachmentClick, isOnline}) {
                 {!isMe ?message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">{FormatMessageDateLong(message.created_at)}</time>
             </div>
-            <div className={"chat-bubble lg:max-w-md relative pb-4 " + (isMe ? "chat-bubble-neutral " : "bg-info/70 text-info-content")}>
+            <div className={"chat-bubble lg:max-w-lg relative pb-4 " + (isMe ? "chat-bubble-neutral " : "bg-info/70 text-info-content")}>
                 {
                     message.sender_id === curUser.id && (
                         <MessageOptionsDropdown message={message} />

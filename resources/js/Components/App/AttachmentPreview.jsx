@@ -7,7 +7,7 @@ export default function AttachmentPreview({attachment}) {
         <div>
             <div className="w-full flex items-center gap-2 py-2 px-3 rounded-md">
                 {isPDF(attachment.file) && (
-                    <img src="/img/pdf.png" alt="pdf file" className="w-8" />
+                    <img src="/img/pdf.png" alt="pdf file" className="w-8 bg-white rounded border border-neutral" />
                 )}
                 {!isPreviewable(attachment.file) && (
                     <div className="w-10 h-10 flex items-center justify-center text-gray-800 rounded bg-accent">

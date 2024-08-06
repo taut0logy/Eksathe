@@ -1,11 +1,12 @@
 import { usePage, router } from "@inertiajs/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useTransition } from "react";
 import { PencilSquareIcon } from "@heroicons/react/24/solid/index.js";
 import TextInput from "@/Components/TextInput.jsx";
 import ConversationItem from "@/Components/App/ConversationItem.jsx";
 import React from "react";
 import { useEventBus } from "@/EventBus";
 import ServerModal from "@/Components/App/ServerModal";
+import ConversationLoading from "@/Components/App/ConversationLoading";
 
 export default function ChatLayout({ children }) {
     const page = usePage();
@@ -15,7 +16,10 @@ export default function ChatLayout({ children }) {
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
     const [showServerModal, setShowServerModal] = useState(false);
+    const [isLoadingConversations, startConversationTransition] = useTransition();
     const selectedConversationRef = useRef(selectedConversation);
+
+    const counts = [1, 2, 3, 4, 5, 6, 7, 8];
 
     useEffect(() => {
         selectedConversationRef.current = selectedConversation;
@@ -26,15 +30,17 @@ export default function ChatLayout({ children }) {
         if (!value || value == "") {
             setLocalConversations(conversations);
         } else {
-            setLocalConversations(
-                conversations.filter((conversation) => {
-                    return (
-                        conversation.name.toLowerCase().includes(value) ||
-                        (conversation.is_server && conversation.description.toLowerCase().includes(value)) ||
-                        (conversation.is_user && conversation.username.toLowerCase().includes(value))
-                    );
-                })
-            );
+            startConversationTransition(() => {
+                setLocalConversations(
+                    conversations.filter((conversation) => {
+                        return (
+                            conversation.name.toLowerCase().includes(value) ||
+                            (conversation.is_server && conversation.description.toLowerCase().includes(value)) ||
+                            (conversation.is_user && conversation.username.toLowerCase().includes(value))
+                        );
+                    })
+                );
+            });
         }
     };
 
@@ -161,7 +167,13 @@ export default function ChatLayout({ children }) {
                         <TextInput onKeyUp={onSearch} placeholder="Filter users and servers" className="" />
                     </div>
                     <div className="flex-1 overflow-auto">
-                        {sortedConversations &&
+                        {sortedConversations.length == 0 && <div className="p-4 text-xl text-center">No conversations found</div>}
+
+                        {isLoadingConversations && counts.map((count, index) => (
+                               <ConversationLoading key={index}/>
+                            ))}
+
+                        {sortedConversations && !isLoadingConversations &&
                             sortedConversations.map((conversation) => (
                                 <ConversationItem
                                     key={`${conversation.is_server ? "server_" : "user_"}${conversation.id}`}

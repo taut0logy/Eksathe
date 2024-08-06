@@ -20,20 +20,22 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         $senderId = $this->faker->numberBetween(0, 1);
-        if($senderId === 0) {
+        if ($senderId === 0) {
             $senderId = $this->faker->randomElement(User::where('id', '!=', 1)->pluck('id')->toArray());
-            $receiverId=1;
+            $receiverId = 1;
         } else {
             $receiverId = $this->faker->randomElement(User::pluck('id')->toArray());
         }
 
         $serverId = null;
-        if($this->faker->boolean(50)) {
+        if ($this->faker->boolean(50)) {
             $serverId = $this->faker->randomElement(Server::pluck('id')->toArray());
-            $server=Server::find($serverId);
-            $senderId=$this->faker->randomElement($server->users->pluck('id')->toArray());
-            $receiverId=null;
+            $server = Server::find($serverId);
+            $senderId = $this->faker->randomElement($server->users->pluck('id')->toArray());
+            $receiverId = null;
         }
+
+        $created = $this->faker->dateTimeBetween('-1 year', 'now');
 
         return [
             //
@@ -41,7 +43,8 @@ class MessageFactory extends Factory
             'receiver_id' => $receiverId,
             'server_id' => $serverId,
             'body' => $this->faker->realText(200),
-            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'created_at' => $created,
+            'updated_at' => $created
         ];
     }
 }

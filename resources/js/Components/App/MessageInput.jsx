@@ -33,6 +33,12 @@ export default function MessageInput(conversation = null) {
 
         const files = e.target.files;
         const newFiles=[...files].map((file) => {
+            if(isImage(file)) {
+                return {
+                    file:file,
+                    url:URL.createObjectURL(file)
+                }
+            }
             return {
                 file:file,
                 url:URL.createObjectURL(file)
@@ -238,7 +244,7 @@ export default function MessageInput(conversation = null) {
             </div>
             <div className={"flex order-3 xs:order-3 p-2"}>
                 <Popover className={"relative"}>
-                    <Popover.Button className="p-1 btn-ghost hover:text-primary rounded">
+                    <Popover.Button className="p-1 rounded btn-ghost hover:text-primary">
                         <FaceSmileIcon className={"w-6"} />
                     </Popover.Button>
                     <Popover.Panel className={"absolute z-10 right-0 bottom-full"}>

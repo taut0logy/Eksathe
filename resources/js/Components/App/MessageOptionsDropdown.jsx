@@ -11,7 +11,7 @@ export default function MessageOptionsDropdown({message}) {
         //console.log('onMessageDelete from ' + message.id);
         axios.delete(route('message.destroy', message))
             .then((response) => {
-                console.log("deleted", response.data);
+                //console.log("deleted", response.data);
                 emit('message.deleted', {message: message, prevMessage: response.data.message});
             })
             .catch((error) => {
@@ -22,11 +22,11 @@ export default function MessageOptionsDropdown({message}) {
 
 
     return (
-        <div className="absolute z-10 top-1/2 -translate-y-1/2 right-full  text-secondary ">
+        <div className="absolute z-10 -translate-y-1/2 top-1/2 right-full text-secondary ">
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button
-                        className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-black/40">
+                        className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/40">
                         <EllipsisVerticalIcon className="w-5 h-5"/>
                     </Menu.Button>
                 </div>
@@ -40,7 +40,7 @@ export default function MessageOptionsDropdown({message}) {
                     leaveTo="transform opacity-0 scale-95"
                 >
                     <Menu.Items
-                        className="absolute left-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        className="absolute left-0 z-50 mt-2 origin-top-right bg-gray-800 rounded-md shadow-lg -top-12 w-36 ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="">
                             <Menu.Item>
                                 {({active}) => (

@@ -172,7 +172,7 @@ class AuthController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:8|confirmed',
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:3072|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
         ]);
 
         $image = $request->file('profile_photo');
@@ -188,7 +188,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        event((new Registered($user)));
+        event(new Registered($user));
         Auth()->login($user);
 
         $request->session()->regenerate();

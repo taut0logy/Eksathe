@@ -13,7 +13,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 
@@ -34,17 +33,23 @@ class MessageController extends BaseController
 
     public function loadOlderMessages(Message $message)
     {
-        if($message->server_id) {
-            $messages = Message::where('created_at', '<', $message->created_at)->where('server_id', $message->server_id)->latest()->paginate(10);
-
+        //Log::info('message older', [$message]);
+        if ($message->server_id) {
+            $messages = Message::where('created_at', '<', $message->created_at)
+                ->where('server_id', $message->server_id)
+                ->latest()->paginate(20);
         } else {
             $messages = Message::where('created_at', '<', $message->created_at)
-                ->where('sender_id', $message->sender_id)
+                ->where('sender_id', $message->sender_id,)
                 ->where('receiver_id', $message->receiver_id)
-                ->orWhere('sender_id', $message->receiver_id)
+                ->orWhere('created_at', '<', $message->created_at)
+                ->where('sender_id', $message->receiver_id)
                 ->where('receiver_id', $message->sender_id)
-                ->latest()->paginate(10);
+                ->latest()->paginate(20);
         }
+        //$response = MessageResource::collection($messages);
+        //Log::info('message newer', [$response]);
+        // return $response;
         return MessageResource::collection($messages);
     }
 
@@ -59,26 +64,26 @@ class MessageController extends BaseController
         $files = $data['attachments'] ?? [];
         $Message = Message::create($data);
         $attachments = [];
-        if($files) {
+        if ($files) {
             foreach ($files as $file) {
                 $dir = 'attachments/' . Str::random(32);
                 Storage::makeDirectory($dir);
-                $model=[
+                $model = [
                     'message_id' => $Message->id,
                     'name' => $file->getClientOriginalName(),
                     'mime' => $file->getClientMimeType(),
                     'size' => $file->getSize(),
                     'path' => $file->store($dir, 'public')
                 ];
-                $attachment=MessageAttachment::create($model);
+                $attachment = MessageAttachment::create($model);
                 $attachments[] = $attachment;
             }
             $Message->attachments = $attachments;
         }
-        if($receiverId) {
-            Conversation::updateConvWithMessage($receiverId,auth()->id(), $Message);
+        if ($receiverId) {
+            Conversation::updateConvWithMessage($receiverId, auth()->id(), $Message);
         }
-        if($serverId) {
+        if ($serverId) {
             Server::updateConvWithMessage($serverId, $Message);
         }
         SocketMessage::dispatch($Message);
@@ -87,7 +92,7 @@ class MessageController extends BaseController
 
     public function destroy(Message $message)
     {
-        if($message->sender_id !== auth()->id()) {
+        if ($message->sender_id !== auth()->id()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -95,7 +100,7 @@ class MessageController extends BaseController
         $conversation = null;
         $lastMessage = null;
 
-        if($message->server_id) {
+        if ($message->server_id) {
             $server = Server::where('last_message_id', $message->id)->first();
         } else {
             $conversation = Conversation::where('last_message_id', $message->id)->first();
@@ -103,11 +108,11 @@ class MessageController extends BaseController
 
         $message->delete();
 
-        if($server) {
-            $server=Server::find($server->id);
+        if ($server) {
+            $server = Server::find($server->id);
             $lastMessage = $server->lastMessage;
-        } else if($conversation) {
-            $conversation=Conversation::find($conversation->id);
+        } else if ($conversation) {
+            $conversation = Conversation::find($conversation->id);
             $lastMessage = $conversation->lastMessage;
         }
 
