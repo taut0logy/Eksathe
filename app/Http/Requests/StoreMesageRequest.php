@@ -25,6 +25,7 @@ class StoreMesageRequest extends FormRequest
             //
             'body' => 'nullable|string',
             //'sender_id' => 'required|exists:users,id',
+            'reply_to_id' => 'nullable|exists:messages,id',
             'server_id' => 'required_without:receiver_id|nullable|exists:servers,id',
             'receiver_id' => 'required_without:server_id|nullable|exists:users,id',
             'attachments' => 'nullable|array|max:10',

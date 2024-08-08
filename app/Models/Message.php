@@ -19,7 +19,8 @@ class Message extends Model
         'receiver_id',
         'conversation_id',
         'server_id',
-        'body'
+        'body',
+        'reply_to_id'
     ];
 
     public function sender(): BelongsTo

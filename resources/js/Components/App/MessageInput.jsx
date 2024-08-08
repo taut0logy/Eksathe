@@ -17,19 +17,22 @@ import { isAudio, isImage } from "@/helpers.jsx";
 import AttachmentPreview from "./AttachmentPreview.jsx";
 import CustomAudioPlayer from "./CustomAudioPlayer.jsx";
 import AudioRecorder from "./AudioRecorder.jsx";
+import { useEventBus } from "@/EventBus.jsx";
 
 
 export default function MessageInput(conversation = null) {
     const c = conversation.conversation;
     //console.log(conversation);
+    const {on} = useEventBus();
     const [newMessage, setNewMessage] = useState("");
     const [inputError, setInputError] = useState("");
     const [messageSending, setMessageSending] = useState(false);
     const [chosenFiles, setChosenFiles] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [replyToId, setReplyToId] = useState(null);
 
     const onFileChange = (e) => {
-        console.log("onfilechange");
+        //console.log("onfilechange");
 
         const files = e.target.files;
         const newFiles=[...files].map((file) => {
@@ -44,7 +47,7 @@ export default function MessageInput(conversation = null) {
                 url:URL.createObjectURL(file)
             }
         })
-        console.log(newFiles);
+        //console.log(newFiles);
         setChosenFiles((prev) => {
             return [...prev, ...newFiles];
 
@@ -66,6 +69,7 @@ export default function MessageInput(conversation = null) {
             formData.append("attachments[]", file.file);
         });
         formData.append("body", newMessage.trim());
+        formData.append("reply_to_id", replyToId);
         //formData.append("sender_id", user.id);
         if (c.is_user) {
             formData.append("receiver_id", parseInt(c.id));
@@ -73,7 +77,7 @@ export default function MessageInput(conversation = null) {
         if (c.is_server) {
             formData.append("server_id", parseInt(c.id));
         }
-        //console.log("formData", formData.data);
+        //console.log("formData", replyToId);
         setMessageSending(true);
         axios
             .post(route("message.store"), formData, {
@@ -133,6 +137,15 @@ export default function MessageInput(conversation = null) {
             return [...prev, {file, url}];
         });
     }
+
+    useEffect(() => {
+        const setReply = on("message.reply", (message) => {
+            setReplyToId(message.id);
+        });
+        return () => {
+            setReply();
+        }
+    }, [on]);
 
     return (
         <div

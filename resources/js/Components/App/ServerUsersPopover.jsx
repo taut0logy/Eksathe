@@ -48,18 +48,18 @@ export default function ServerUsersPopover({ users = [] }) {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                     >
-                        <Popover.Panel className="absolute right-0 z-50 w-48 px-4 sm:px-0 mt-3">
+                        <Popover.Panel className="absolute right-0 z-50 w-48 px-4 mt-3 sm:px-0">
                             <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
-                                <div className="bg-gray-800 p-2">
-                                <div className="mb-2 p-2">
+                                <div className="p-2 bg-gray-800">
+                                <div className="p-2 mb-2">
                                 <TextInput
                                     onKeyUp={onSearch}
                                     placeholder="Search members"
-                                    className="w-full text-s rounded-md"
+                                    className="w-full rounded-md text-s"
                                 />
                                 </div>
                                     {curUsers.map((user) => (
-                                        <Link key={user.id} href={route("chat.user", user.id)} className="flex items-center gap-2 py-2 px-3 hover:bg-black/30 rounded-md">
+                                        <Link key={user.id} href={route("chat.user", user.id)} className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-black/30">
                                             <UserAvatar user={user} />
                                             <div className="text-xs">{user.name}</div>
                                         </Link>

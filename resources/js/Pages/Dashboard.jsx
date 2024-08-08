@@ -2,19 +2,26 @@ import { Head } from "@inertiajs/react";
 import ChatLayout from "@/Layouts/ChatLayout.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline/index.js";
+import {
+    ChatBubbleLeftRightIcon,
+    XMarkIcon,
+} from "@heroicons/react/24/outline/index.js";
 import ConversationHeader from "@/Components/App/ConversationHeader.jsx";
 import MessageInput from "@/Components/App/MessageInput.jsx";
 import MessageItem from "@/Components/App/MesageItem";
 import React from "react";
+import { usePage } from "@inertiajs/react";
 import { useEventBus } from "@/EventBus";
 import axios from "axios";
 import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal";
+import AttachmentPreview from "@/Components/App/AttachmentPreview";
+import MessageAttachments from "@/Components/App/MessageAttachments";
 
 export default function Dashboard({
     selectedConversation = null,
     messages = null,
 }) {
+    const curUser = usePage().props.auth.user;
     const [localMessages, setLocalMessages] = useState([]);
     const [noMoreMessages, setNoMoreMessages] = useState(false);
     const [scrollFromBottom, setScrollFromBottom] = useState(0);
@@ -22,12 +29,14 @@ export default function Dashboard({
     const loadMoreIntersector = useRef(null);
     const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
     const [previewAttachment, setPreviewAttachment] = useState({});
-    let { on, currentUsers, setCurrentUsers } = useEventBus();
+    const [replyMessage, setReplyMessage] = useState(null);
+    const { on, currentUsers, setCurrentUsers } = useEventBus();
+
     useEffect(() => {
         Echo.join("online")
             .here((users) => {
                 const onlineUsersMap = Object.fromEntries(
-                    users.map((user) => [user.id, user]),
+                    users.map((user) => [user.id, user])
                 );
                 setCurrentUsers((prev) => {
                     return { ...prev, ...onlineUsersMap };
@@ -126,6 +135,23 @@ export default function Dashboard({
             });
     }, [localMessages, noMoreMessages]);
 
+    useEffect(() => {
+        const offReply = on("message.reply", (message) => {
+            setReplyMessage(message);
+        });
+        const offGoTo = on("message.goTo", (id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+                el.focus();
+            }
+        });
+        return () => {
+            offReply();
+            offGoTo();
+        };
+    }, [on]);
+
     const attachmentClick = (attachments, ind) => {
         setPreviewAttachment({ attachments, ind });
         setShowAttachmentPreview(true);
@@ -174,7 +200,7 @@ export default function Dashboard({
             },
             {
                 rootMargin: "0px 0px 450px 0px",
-            },
+            }
         );
 
         if (loadMoreIntersector.current) {
@@ -253,6 +279,43 @@ export default function Dashboard({
                             </div>
                         )}
                     </div>
+                    {replyMessage && (
+                        <div
+                            className={
+                                "p-2 cursor-pointer opacity-80 border-t border-primary"
+                            }
+                        >
+                            <button
+                                className={
+                                    "float-right rounded-full bg-slate-500 text-slate-900 hover:bg-primary hover:text-primary-content"
+                                }
+                            >
+                                <XMarkIcon
+                                    className="w-6 h-6"
+                                    onClick={() => setReplyMessage(null)}
+                                />
+                            </button>
+                            <div className="p-1 text-lg font-bold border-b border-primary w-fit">
+                                Replying to{" "}
+                                {replyMessage.sender_id === curUser.id
+                                    ? "Yourself"
+                                    : replyMessage.sender.name}
+                                :
+                            </div>
+                            <div className="overflow-scroll max-h-60">
+                                {replyMessage.body && (
+                                    <div className="p-1 text-md">
+                                        {replyMessage.body}
+                                    </div>
+                                )}
+                                {replyMessage.attachments && (
+                                    <MessageAttachments
+                                        attachments={replyMessage.attachments}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )}
                     <MessageInput conversation={selectedConversation} />
                     {previewAttachment.attachments && (
                         <AttachmentPreviewModal

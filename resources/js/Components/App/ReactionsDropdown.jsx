@@ -5,7 +5,7 @@ import axios from "axios";
 import { useEventBus } from '@/EventBus';
 
 
-export default function MessageOptionsDropdown({message}) {
+export default function ReactionsDropdown({message}) {
     const {emit} = useEventBus();
     const onMessageDelete = () => {
         //console.log('onMessageDelete from ' + message.id);
@@ -22,7 +22,7 @@ export default function MessageOptionsDropdown({message}) {
 
 
     return (
-        <div className="absolute z-10 -translate-y-1/2 top-1/2 right-full text-secondary -translate-x-7">
+        <div className="absolute z-10 -translate-y-1/2 top-1/2 right-full text-secondary ">
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button

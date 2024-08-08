@@ -63,6 +63,8 @@ class MessageController extends BaseController
         $serverId = $data['server_id'] ?? null;
         $files = $data['attachments'] ?? [];
         $Message = Message::create($data);
+        Log::info('Message data', [$data]);
+        Log::info('Message', [$Message]);
         $attachments = [];
         if ($files) {
             foreach ($files as $file) {
