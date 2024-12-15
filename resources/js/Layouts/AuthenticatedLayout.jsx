@@ -162,15 +162,15 @@ export default function Authenticated({
                                                 </span>
                                             </Dropdown.Trigger>
 
-                                            <Dropdown.Content contentClasses="bg-primary text-primary-content">
+                                            <Dropdown.Content className="" contentClasses="bg-neutral">
                                                 <Dropdown.Link
-                                                    className="rounded-md hover:bg-secondary hover:text-secondary-content"
+                                                    className="rounded-md hover:bg-primary/90"
                                                     href={route("profile.edit")}
                                                 >
                                                     Profile
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
-                                                    className="rounded-md hover:bg-secondary hover:text-secondary-content"
+                                                    className="rounded-md hover:bg-primary/90"
                                                     href={route("logout")}
                                                     as="button"
                                                 >

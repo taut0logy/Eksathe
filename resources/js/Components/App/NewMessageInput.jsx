@@ -1,8 +1,7 @@
-import {useEffect, useRef} from "react";
+import { useEffect, forwardRef } from "react";
 
-
-export default function NewMessageInput({value, onChange, onSend}) {
-    const input=useRef();
+const NewMessageInput = forwardRef(({ value, onChange, onSend }, ref) => {
+    //const ref = useRef();
     const onInputKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -12,25 +11,33 @@ export default function NewMessageInput({value, onChange, onSend}) {
     const onChangeEvent = (e) => {
         setTimeout(() => {
             adjustHeight();
-        },10)
+        }, 10);
         onChange(e);
-    }
+    };
     const adjustHeight = () => {
         setTimeout(() => {
-            input.current.style.height = "auto";
-            input.current.style.height = input.current.scrollHeight + 1 + "px";
-        },100);
-    }
+            ref.current.style.height = "auto";
+            ref.current.style.height = ref.current.scrollHeight + 1 + "px";
+        }, 100);
+    };
 
     useEffect(() => {
         adjustHeight();
     });
+
     return (
-        <textarea placeholder="Type a message..."
-                  rows="1"
-                  value={value}
-                  onChange={(e) => onChangeEvent(e)}
-                  onKeyDown={onInputKeyDown} ref={input}
-                  className="w-full overflow-y-auto rounded-r-none resize-none textarea textarea-bordered max-h-40"></textarea>
-    )
-}
+        <textarea
+            placeholder="Type a message..."
+            rows="1"
+            value={value}
+            onChange={(e) => onChangeEvent(e)}
+            onKeyDown={onInputKeyDown}
+            ref={ref}
+            className="w-full overflow-y-auto rounded-r-none resize-none textarea textarea-bordered max-h-40"
+        ></textarea>
+    );
+});
+
+NewMessageInput.displayName = "NewMessageInput";
+
+export default NewMessageInput;

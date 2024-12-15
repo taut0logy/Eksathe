@@ -1,10 +1,10 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import { Link } from "@inertiajs/react";
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 export default function Guest({ children, logo = true }) {
     return (
-        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 overflow-y-scroll">
+        <div className="flex flex-col items-center max-h-screen min-h-screen pt-6 overflow-y-auto sm:justify-center sm:pt-0">
             {logo && (
                 <div>
                     <Link href="/">
@@ -13,15 +13,13 @@ export default function Guest({ children, logo = true }) {
                 </div>
             )}
 
+            <div className="absolute top-0 left-0 flex items-center justify-center translate-x-3 translate-y-3">
+                <Link href="/">
+                    <ArrowLeftIcon className="w-6 h-6 text-primary hover:text-accent" />
+                </Link>
+            </div>
 
-                    <div className="absolute top-0 left-0 translate-x-3 translate-y-3 flex items-center justify-center">
-                        <Link href="/">
-                            <ArrowLeftIcon className="w-6 h-6 text-primary hover:text-accent" />
-                        </Link>
-                    </div>
-
-
-            <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-neutral/80 text-neutral-content shadow-md overflow-hidden sm:rounded-lg">
+            <div className="w-full max-h-screen px-6 py-4 mt-6 shadow-md sm:max-w-md bg-neutral/80 text-neutral-content sm:rounded-lg">
                 {children}
             </div>
         </div>

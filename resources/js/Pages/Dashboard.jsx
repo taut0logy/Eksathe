@@ -146,9 +146,13 @@ export default function Dashboard({
                 el.focus();
             }
         });
+        const offMessageSent = on("message.sent",() => {
+            setReplyMessage(null);
+        })
         return () => {
             offReply();
             offGoTo();
+            offMessageSent();
         };
     }, [on]);
 

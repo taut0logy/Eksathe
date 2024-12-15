@@ -1,89 +1,125 @@
-import {useEffect, useState} from 'react';
-import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { useEffect, useState } from "react";
+import GuestLayout from "@/Layouts/GuestLayout";
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { PencilIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
-export default function Register({status, success, info, error, canResetPassword}) {
+export default function Register({ status, success, info, error }) {
     const [avatar, setAvatar] = useState(null);
 
     const clearAvatar = () => {
         setAvatar(null);
     };
-    
+
     const { data, setData, post, processing, errors, reset } = useForm({
         profile_photo: null,
-        username: '',
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        _method: 'POST'
+        username: "",
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        _method: "POST",
     });
 
     // const [file, setFile] = useState(null);
 
     useEffect(() => {
         return () => {
-            reset('password', 'password_confirmation');
+            reset("password", "password_confirmation");
         };
     }, []);
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('register'));
+        post(route("register"));
     };
 
     return (
-        <GuestLayout logo = {false}>
+        <GuestLayout logo={false}>
             <Head title="Register" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-            {success && <div className="mb-4 font-medium text-sm text-success">{success}</div>}
-            {error && <div className="mb-4 font-medium text-sm text-error">{error}</div>}
-            {info && <div className="mb-4 font-medium text-sm text-info">{info}</div>}
-
-            <form onSubmit={submit} >
-
-            <div>
-                <InputLabel className="text-center mb-3" htmlFor="profile_photo" value="Choose Profile Photo" />
-                <div className="w-full flex items-center justify-center">
-                    <div className="relative rounded-full border-4 border-accent">
-                        {avatar && (
-                            <div className={`chat-image avatar flex items-center justify-center`}>
-                                <div className={`rounded-full w-40 h-40`}>
-                                    <img src={avatar} alt="" />
-                                </div>
-                            </div>
-                        )}
-
-                        {!avatar && (
-                            <div className={`chat-image avatar flex items-center justify-center`}>
-                            <div className={`rounded-full w-40 h-40`}>
-                                <img className='bg-white' src={"/img/avatar.png"} alt="" />
-                            </div>
-                        </div>
-                        )}
-                        <input
-                            type="file"
-                            accept={"image/*"}
-                            id="profile_photo"
-                            name="profile_photo"
-                            className="w-40 h-40 absolute top-0 left-0 rounded-full opacity-0 overflow-hidden shadow-lg cursor-pointer"
-                            onChange={(e) =>{
-                                setAvatar(URL.createObjectURL(e.target.files[0]))
-                                setData("profile_photo", e.target.files[0])
-                            }
-                            }
-                        />
-                        <PencilIcon className="w-10 h-10 absolute bottom-0 right-0 text-accent-content bg-accent rounded-full p-2 cursor-pointer" />
-                        {avatar && (<XMarkIcon className="w-8 h-8 absolute top-0 right-0 -translate-x-1 translate-y-1 text-accent-content bg-accent rounded-full p-2 cursor-pointer" onClick={clearAvatar} />)}
+            <form onSubmit={submit} className="">
+                {status && (
+                    <div className="mb-4 text-sm font-medium text-green-600">
+                        {status}
                     </div>
-                </div>
-                <InputError message={errors.profile_photo} className="mt-2 text-center" />
+                )}
+                {success && (
+                    <div className="mb-4 text-sm font-medium text-success">
+                        {success}
+                    </div>
+                )}
+                {error && (
+                    <div className="mb-4 text-sm font-medium text-error">
+                        {error}
+                    </div>
+                )}
+                {info && (
+                    <div className="mb-4 text-sm font-medium text-info">
+                        {info}
+                    </div>
+                )}
+                <div>
+                    <InputLabel
+                        className="mb-3 text-center"
+                        htmlFor="profile_photo"
+                        value="Choose Profile Photo"
+                    />
+                    <div className="flex items-center justify-center w-full">
+                        <div className="relative border-4 rounded-full border-accent">
+                            {avatar && (
+                                <div
+                                    className={`chat-image avatar flex items-center justify-center`}
+                                >
+                                    <div className={`rounded-full w-40 h-40`}>
+                                        <img src={avatar} alt="" />
+                                    </div>
+                                </div>
+                            )}
+
+                            {!avatar && (
+                                <div
+                                    className={`chat-image avatar flex items-center justify-center`}
+                                >
+                                    <div className={`rounded-full w-40 h-40`}>
+                                        <img
+                                            className="bg-white"
+                                            src={"/img/avatar.png"}
+                                            alt=""
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            <input
+                                required
+                                type="file"
+                                accept={"image/*"}
+                                id="profile_photo"
+                                name="profile_photo"
+                                className="absolute top-0 left-0 w-40 h-40 overflow-hidden rounded-full shadow-lg opacity-0 cursor-pointer"
+                                onChange={(e) => {
+                                    setAvatar(
+                                        URL.createObjectURL(e.target.files[0])
+                                    );
+                                    setData("profile_photo", e.target.files[0]);
+                                }}
+                            />
+                            <PencilIcon className="absolute bottom-0 right-0 w-10 h-10 p-2 rounded-full cursor-pointer text-accent-content bg-accent" />
+                            {avatar && (
+                                <XMarkIcon
+                                    className="absolute top-0 right-0 w-8 h-8 p-2 -translate-x-1 translate-y-1 rounded-full cursor-pointer text-accent-content bg-accent"
+                                    onClick={clearAvatar}
+                                />
+                            )}
+                        </div>
+                    </div>
+                    <InputError
+                        message={errors.profile_photo}
+                        className="mt-2 text-center"
+                    />
                 </div>
 
                 <div className="mt-4">
@@ -94,10 +130,10 @@ export default function Register({status, success, info, error, canResetPassword
                         type="text"
                         name="username"
                         value={data.username}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="username"
                         isFocused={true}
-                        onChange={(e) => setData('username', e.target.value)}
+                        onChange={(e) => setData("username", e.target.value)}
                         required
                     />
 
@@ -111,9 +147,9 @@ export default function Register({status, success, info, error, canResetPassword
                         id="name"
                         name="name"
                         value={data.name}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="name"
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                         required
                     />
 
@@ -128,9 +164,9 @@ export default function Register({status, success, info, error, canResetPassword
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="email"
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e) => setData("email", e.target.value)}
                         required
                     />
 
@@ -145,9 +181,9 @@ export default function Register({status, success, info, error, canResetPassword
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
+                        onChange={(e) => setData("password", e.target.value)}
                         required
                     />
 
@@ -155,26 +191,34 @@ export default function Register({status, success, info, error, canResetPassword
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
+                    <InputLabel
+                        htmlFor="password_confirmation"
+                        value="Confirm Password"
+                    />
 
                     <TextInput
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
+                        onChange={(e) =>
+                            setData("password_confirmation", e.target.value)
+                        }
                         required
                     />
 
-                    <InputError message={errors.password_confirmation} className="mt-2" />
+                    <InputError
+                        message={errors.password_confirmation}
+                        className="mt-2"
+                    />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
                     <Link
-                        href={route('login')}
-                        className="underline text-sm hover:text-accent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        href={route("login")}
+                        className="text-sm underline rounded-md hover:text-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
                         Already registered?
                     </Link>
