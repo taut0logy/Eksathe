@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eksathe-app
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=eksathe
+      - DB_USERNAME=eksathe
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - eksathe-network
+
+  nginx:
+    image: nginx:latest
+    container_name: eksathe-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./serverconfig/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    restart: always
+    networks:
+      - eksathe-network
+
+  db:
+    image: mysql:8
+    container_name: eksathe-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: eksathe
+      MYSQL_USER: eksathe
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    networks:
+      - eksathe-network
+
+volumes:
+  db_data:
+
+networks:
+  eksathe-network:
+    driver: bridge
