@@ -13,13 +13,14 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libsocket-dev \
     redis-server
-    nodejs \
-    npm \
     supervisor \
     && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Node.js
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 
 # Set working directory
 WORKDIR /var/www/html
