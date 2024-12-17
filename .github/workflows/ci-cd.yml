@@ -26,11 +26,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
+        run: |
+          docker-compose build
+          docker-compose push
 
       - name: Set up SSH
         uses: appleboy/ssh-action@v0.1.6
@@ -38,64 +36,3 @@ jobs:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.CLOUD_SERVER_USER }}
           password: ${{ secrets.CLOUD_SERVER_PASSWORD }}
-
-      - name: Deploy to Server
-        env:
-          APP_ENV: production
-          APP_URL: ${{ secrets.APP_URL }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        run: |
-
-            # Stop and remove existing containers
-            docker-compose down --volumes --remove-orphans
-
-            # Pull latest images
-            docker-compose pull
-
-            # Start containers
-            docker-compose up -d --build
-
-            # Remove dangling images
-            docker image prune -f
-
-            # Wait for the Laravel container to be ready (use a better approach for waiting)
-            echo "Waiting for the Laravel container to be ready..."
-            until docker exec eksathe-app curl --silent --fail http://localhost:80; do
-              echo "Laravel container is not ready yet..."
-              sleep 3
-            done
-
-            # Generate App Key
-            echo "Generating App Key..."
-            docker exec eksathe-app php artisan key:generate
-
-            # Run Migrations
-            echo "Running Migrations..."
-            docker exec eksathe-app php artisan migrate:fresh --seed
-
-            # Clear Cache
-            echo "Clearing Cache..."
-            docker exec eksathe-app php artisan cache:clear
-            docker exec eksathe-app php artisan config:clear
-            docker exec eksathe-app php artisan route:clear
-
-            # Check nginx configuration
-            echo "Checking nginx configuration..."
-            docker exec eksathe-nginx nginx -t
-
-            # Check Containers
-            echo "Checking Containers..."
-            docker ps
-
-            # Check Logs
-            echo "Checking Logs..."
-            docker-compose logs
-
-            # Check Network
-            echo "Checking Network..."
-            docker network inspect eksathe-network
-
-            #xcheck error logs
-            echo "Checking Error Logs..."
-            docker-compose logs --tail=100 | grep error

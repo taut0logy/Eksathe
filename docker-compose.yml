@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  app:
+  eksathe-app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,14 +16,14 @@ services:
       - DB_USERNAME=eksathe
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - db
+      - eksathe-db
     restart: always
     networks:
       - eksathe-network
 
-  nginx:
+  eksathe-server:
     image: nginx:latest
-    container_name: eksathe-nginx
+    container_name: eksathe-server
     ports:
       - "80:80"
     volumes:
@@ -35,7 +35,7 @@ services:
     networks:
       - eksathe-network
 
-  db:
+  eksathe-db:
     image: mysql:8
     container_name: eksathe-db
     environment:
