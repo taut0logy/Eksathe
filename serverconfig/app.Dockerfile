@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libzip-dev \
     libsocket-dev \
-    redis-server
+    redis-server \
     supervisor \
     && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
 
