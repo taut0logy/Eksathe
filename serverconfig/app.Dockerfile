@@ -19,7 +19,9 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+curl -fsSL https://fnm.vercel.app/install | bash
+source ~/.bashrc
+fnm use --install-if-missing 22
 
 # Set working directory
 WORKDIR /var/www/html
