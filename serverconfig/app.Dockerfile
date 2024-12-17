@@ -4,16 +4,19 @@ FROM php:8.2-fpm
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
+    nano \
     curl \
     unzip \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     libzip-dev \
+    libsocket-dev \
+    redis-server
     nodejs \
     npm \
     supervisor \
-    && docker-php-ext-install pdo pdo_mysql zip gd
+    && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -26,6 +29,8 @@ COPY . .
 
 # copy environment file
 RUN cp .env.example .env
+
+RUN composer require laravel/reverb predis/predis
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -54,3 +59,4 @@ EXPOSE 9000
 
 # Run entrypoint script
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
