@@ -35,11 +35,6 @@ COPY --from=build /var/www/html/public/build /var/www/html/public/build
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js
-RUN npm install npm@latest -g && \
-    npm install n -g && \
-    n latest
-
 # Set working directory
 WORKDIR /var/www/html
 
