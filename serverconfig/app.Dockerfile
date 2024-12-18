@@ -13,15 +13,17 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     redis-server \
     supervisor \
+    software-properties-common \
+    npm \
     && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js
-RUN curl -fsSL https://fnm.vercel.app/install | bash \
-    && source ~/.bashrc \
-    && fnm use --install-if-missing 22
+RUN npm install npm@lts -g && \
+    npm install n -g && \
+    n lts
 
 # Set working directory
 WORKDIR /var/www/html
