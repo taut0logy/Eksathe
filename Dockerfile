@@ -8,7 +8,8 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
-RUN npm run build
+RUN npm run build \
+    && rm -rf node_modules
 
 # Production stage
 FROM php:8.2-fpm
@@ -42,6 +43,10 @@ COPY . .
 # Copy built assets from build stage
 COPY --from=build /var/www/html/public/build ./public/build
 
+# Add permissions for build files
+RUN chown -R www-data:www-data /var/www/html/public/build \
+    && chmod -R 755 /var/www/html/public/build
+
 # copy environment file
 RUN cp .env.example .env
 
@@ -54,7 +59,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN composer require predis/predis
 
 # Copy nginx configuration
-COPY ./serverconfig/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
 
 # Copy Supervisor configuration
 COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
