@@ -29,17 +29,17 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
 
-# Copy built assets from build stage
-COPY --from=build /var/www/html/public/build /var/www/html/public/build
-
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# # Copy application code
-# COPY . .
+# Copy application code
+COPY . .
+
+# Copy built assets from build stage
+COPY --from=build /var/www/html/public/build /var/www/html/public/build
 
 # copy environment file
 RUN cp .env.example .env
