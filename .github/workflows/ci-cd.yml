@@ -59,13 +59,10 @@ jobs:
             docker rm eksathe-db || true
             docker stop eksathe-app || true
             docker rm eksathe-app || true
-            docker stop eksathe-server || true
-            docker rm eksathe-server || true
 
             # Pull latest images
             docker pull mysql:8
             docker pull ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/eksathe-server:latest
 
             # Remove dangling images
             docker image prune -f || true
@@ -93,13 +90,6 @@ jobs:
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               --network eksathe-network \
               ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
-
-            # Run server container
-            docker run -d \
-              --name eksathe-server \
-              -p 80:80 \
-              --network eksathe-network \
-              ${{ secrets.DOCKER_USERNAME }}/eksathe-server:latest
 
             # Remove dangling images
             docker image prune -f || true
@@ -142,20 +132,20 @@ jobs:
 
             # Check nginx configuration
             echo "Checking nginx configuration..."
-            docker exec eksathe-nginx nginx -t
+            docker exec eksathe-app nginx -t
 
-            # Check Containers
-            echo "Checking Containers..."
-            docker ps
+            # Check Container log
+            echo "Checking Container Logs..."
+            docker logs eksathe-app
 
-            # Check Logs
-            echo "Checking Logs..."
-            docker-compose logs
+            # Check nginx log
+            echo "Checking Nginx error Logs..."
+            docker exec eksathe-app tail -f /var/log/nginx/error.log
 
-            # Check Network
-            echo "Checking Network..."
-            docker network inspect eksathe-network
+            # Check reverb logs
+            echo "Checking Reverb Logs..."
+            docker exec eksathe-app tail -f /var/log/nginx/reverb.err.log
 
-            #xcheck error logs
+            # Check error logs
             echo "Checking Error Logs..."
             docker exec eksathe-app tail -f storage/logs/laravel.log

@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     nano \
+    nginx \
     unzip \
     libpng-dev \
     libjpeg-dev \
@@ -39,7 +40,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Copy built assets from build stage
-COPY --from=build /var/www/html/public/build /var/www/html/public/build
+COPY --from=build /var/www/html/public/build ./public/build
 
 # copy environment file
 RUN cp .env.example .env
@@ -52,8 +53,11 @@ RUN chown -R www-data:www-data /var/www/html \
 RUN composer install --no-dev --optimize-autoloader
 RUN composer require predis/predis
 
+# Copy nginx configuration
+COPY ./serverconfig/nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy Supervisor configuration
-COPY ./serverconfig/supervisord.2.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copy entrypoint script
 COPY ./serverconfig/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
@@ -61,11 +65,8 @@ COPY ./serverconfig/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Make entrypoint script executable
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
-
-# Run Supervisor to manage PHP-FPM and Reverb server
-# CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+# Expose port 80
+EXPOSE 80
 
 # Run entrypoint script
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
