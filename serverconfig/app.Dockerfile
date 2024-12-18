@@ -1,11 +1,23 @@
-# Dockerfile for Laravel with React and Reverb server
+FROM node:18-alpine as build
+
+WORKDIR /var/www/html
+
+# Copy only package files first to leverage cache
+COPY package*.json ./
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+RUN npm run build
+
+# Production stage
 FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
-    nano \
     curl \
+    nano \
     unzip \
     libpng-dev \
     libjpeg-dev \
@@ -13,9 +25,12 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     redis-server \
     supervisor \
-    software-properties-common \
-    npm \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
+
+# Copy built assets from build stage
+COPY --from=build /var/www/html/public/build /var/www/html/public/build
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -28,8 +43,8 @@ RUN npm install npm@latest -g && \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy application code
-COPY . .
+# # Copy application code
+# COPY . .
 
 # copy environment file
 RUN cp .env.example .env
