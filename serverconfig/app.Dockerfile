@@ -49,9 +49,6 @@ RUN composer require laravel/reverb predis/predis
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Build React frontend
-RUN npm install && npm run build
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
