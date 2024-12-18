@@ -51,7 +51,8 @@ RUN chown -R www-data:www-data /var/www/html/public/build \
 RUN cp .env.example .env
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html \
+RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies
