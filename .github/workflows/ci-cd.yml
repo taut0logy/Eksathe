@@ -75,6 +75,7 @@ jobs:
               -e MYSQL_USER=eksathe \
               -e MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -v db_data:/var/lib/mysql \
+              --network eksathe-network \
               mysql:8
 
             # Run app container
