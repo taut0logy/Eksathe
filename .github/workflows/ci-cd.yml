@@ -103,10 +103,6 @@ jobs:
             echo "Waiting for the Laravel container to be ready..."
             sleep 10
 
-            # Generate App Key
-            echo "Generating App Key..."
-            docker exec eksathe-app php artisan key:generate
-
             # Link Storage
             echo "Linking Storage..."
             docker exec eksathe-app php artisan storage:link
@@ -124,7 +120,7 @@ jobs:
 
             # Run Migrations
             echo "Running Migrations..."
-            docker exec eksathe-app php artisan migrate
+            docker exec eksathe-app php artisan migrate:fresh --seed --force
 
             # Clear Cache
             echo "Clearing Cache..."
@@ -143,10 +139,6 @@ jobs:
             # Check nginx log
             echo "Checking Nginx error Logs..."
             docker exec eksathe-app tail -f /var/log/nginx/error.log
-
-            # Check reverb logs
-            echo "Checking Reverb Logs..."
-            docker exec eksathe-app tail -f /var/log/reverb.err.log
 
             # Check error logs
             echo "Checking Error Logs..."
