@@ -132,10 +132,6 @@ jobs:
             echo "Checking Container Logs..."
             docker logs eksathe-app
 
-            # Check nginx log
-            echo "Checking Nginx error Logs..."
-            docker exec eksathe-app tail -f /var/log/nginx/error.log
-
             # Check error logs
             echo "Checking Error Logs..."
             docker exec eksathe-app tail -f storage/logs/laravel.log
