@@ -12,12 +12,12 @@ fi
 
 while IFS='=' read -r key value; do
   if [ -n "$value" ]; then
-    sed -i "s|${key}=.*|${key}=${value}|g" .env
+    nkey=$(echo "$key" | sed 's/[\/&]/\\&/g')
+    sed -i "s|^${nkey}=.*|${nkey}=${value}|g" .env
   else
     echo "${key}=${value}" >> .env
   fi
 done < <(env)
 
 # run supervisor
-
-exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
