@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/confirm-password', [AuthController::class, 'confirmPasswordPage'])->name('confirm-password');
 
-    Route::post('/confirm-password', [AuthController::class, 'confirmPassword'])->name('confirm-password');
+    Route::post('/confirm-password', [AuthController::class, 'confirmPassword'])->name('confirm-password-post');
 
     Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verify-email');
 });

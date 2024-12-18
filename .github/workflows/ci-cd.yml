@@ -80,6 +80,8 @@ jobs:
             # Run app container
             docker run -d \
               --name eksathe-app \
+              -p 80:80 \
+              -e APP_KEY=${{ secrets.APP_KEY }} \
               -e APP_ENV=production \
               -e APP_DEBUG=true \
               -e APP_URL=${{ secrets.APP_URL }} \
@@ -122,7 +124,7 @@ jobs:
 
             # Run Migrations
             echo "Running Migrations..."
-            docker exec eksathe-app php artisan migrate:fresh --seed
+            docker exec eksathe-app php artisan migrate
 
             # Clear Cache
             echo "Clearing Cache..."
@@ -144,7 +146,7 @@ jobs:
 
             # Check reverb logs
             echo "Checking Reverb Logs..."
-            docker exec eksathe-app tail -f /var/log/nginx/reverb.err.log
+            docker exec eksathe-app tail -f /var/log/reverb.err.log
 
             # Check error logs
             echo "Checking Error Logs..."
