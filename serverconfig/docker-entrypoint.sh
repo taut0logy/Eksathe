@@ -18,6 +18,6 @@ while IFS='=' read -r key value; do
   fi
 done < <(env)
 
-// run supervisor
+# run supervisor
 
 exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
