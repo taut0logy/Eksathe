@@ -109,10 +109,7 @@ jobs:
 
             # Wait for the Laravel container to be ready (use a better approach for waiting)
             echo "Waiting for the Laravel container to be ready..."
-            until docker exec eksathe-app curl --silent --fail http://localhost:80; do
-              echo "Laravel container is not ready yet..."
-              sleep 3
-            done
+            sleep 10
 
             # Generate App Key
             echo "Generating App Key..."
