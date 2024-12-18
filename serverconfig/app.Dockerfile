@@ -44,14 +44,13 @@ COPY --from=build /var/www/html/public/build /var/www/html/public/build
 # copy environment file
 RUN cp .env.example .env
 
-RUN composer require laravel/reverb predis/predis
-
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader
+RUN composer require predis/predis
 
 # Copy Supervisor configuration
 COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
