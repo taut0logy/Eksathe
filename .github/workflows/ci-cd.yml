@@ -85,6 +85,7 @@ jobs:
               -e DB_DATABASE=eksathe \
               -e DB_USERNAME=eksathe \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e REVERB_HOST=${{ secrets.REVERB_HOST }} \
               --network eksathe-network \
               ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
 
