@@ -158,4 +158,4 @@ jobs:
 
             #xcheck error logs
             echo "Checking Error Logs..."
-            docker-compose logs --tail=100 | grep error
+            docker exec eksathe-app tail -f storage/logs/laravel.log
