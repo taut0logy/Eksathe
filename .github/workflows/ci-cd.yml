@@ -27,17 +27,11 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest \
-            -f serverconfig/app.Dockerfile .
-
-          docker build -t \
-            ${{ secrets.DOCKER_USERNAME }}/eksathe-server:latest \
-            -f serverconfig/server.Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest .
 
       - name: Push images to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/eksathe-server:latest
 
   deploy:
     runs-on: ubuntu-latest
