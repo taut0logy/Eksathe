@@ -85,6 +85,13 @@ jobs:
               -e DB_DATABASE=eksathe \
               -e DB_USERNAME=eksathe \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e MAIL_MAILER=smtp \
+              -e MAIL_HOST=smto.gmail.com \
+              -e MAIL_PORT=587 \
+              -e MAIL_USERNAME=${{ secrets.MAIL_ADDRESS }} \
+              -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+              -e MAIL_ENCRYPTION=tls \
+              -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_ADDRESS }} \
               -e REVERB_APP_KEY=${{ secrets.REVERB_APP_KEY }} \
               -e REVERB_APP_SECRET=${{ secrets.REVERB_APP_SECRET }} \
               -e REVERB_HOST=${{ secrets.REVERB_HOST }} \
@@ -120,7 +127,7 @@ jobs:
 
             # Run Migrations
             echo "Running Migrations..."
-            docker exec eksathe-app php artisan migrate:fresh --seed --force
+            docker exec eksathe-app php artisan migrate:fresh --force
 
             # Clear Cache
             echo "Clearing Cache..."
