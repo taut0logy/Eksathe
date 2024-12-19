@@ -71,8 +71,10 @@ COPY ./serverconfig/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Make entrypoint script executable
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Expose port 80
+# Expose port 80, 8081
 EXPOSE 80
+
+EXPOSE 8081
 
 # Run entrypoint script
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

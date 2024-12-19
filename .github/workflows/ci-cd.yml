@@ -88,6 +88,8 @@ jobs:
               -e REVERB_APP_KEY=${{ secrets.REVERB_APP_KEY }} \
               -e REVERB_APP_SECRET=${{ secrets.REVERB_APP_SECRET }} \
               -e REVERB_HOST=${{ secrets.REVERB_HOST }} \
+              -e REVERB_PORT=8081 \
+              -e REVERB_SERVER_PORT=8082 \
               --network eksathe-network \
               ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
 
