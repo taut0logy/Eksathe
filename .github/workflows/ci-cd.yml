@@ -86,7 +86,7 @@ jobs:
               -e DB_USERNAME=eksathe \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e MAIL_MAILER=smtp \
-              -e MAIL_HOST=smto.gmail.com \
+              -e MAIL_HOST=smtp.gmail.com \
               -e MAIL_PORT=587 \
               -e MAIL_USERNAME=${{ secrets.MAIL_ADDRESS }} \
               -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
