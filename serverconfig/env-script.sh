@@ -18,6 +18,3 @@ while IFS='=' read -r key value; do
     echo "${key}=${value}" >> .env
   fi
 done < <(env)
-
-# run supervisor
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

@@ -43,21 +43,17 @@ COPY . .
 # Copy built assets from build stage
 COPY --from=build /var/www/html/public/build ./public/build
 
-# Add permissions for build files
-RUN chown -R www-data:www-data /var/www/html/public/build \
-    && chmod -R 755 /var/www/html/public/build
-
 # copy environment file
 RUN cp .env.example .env
 
 # Set permissions
 RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chown -R www-data:www-data . \
+    && chmod -R 755 ./storage ./bootstrap/cache ./public
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
-RUN composer require predis/predis
+# RUN composer require predis/predis
 
 # Copy nginx configuration
 COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
@@ -66,16 +62,18 @@ COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
 COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copy entrypoint script
-COPY ./serverconfig/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
 
 # Make entrypoint script executable
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/env-script.sh
 
-# Expose port 80, 8081
+# Expose port 80, 8080
 EXPOSE 80
 
-EXPOSE 8081
+EXPOSE 8080
 
 # Run entrypoint script
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+RUN ["/usr/local/bin/env-script.sh"]
 
+# Start Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
