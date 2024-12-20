@@ -61,19 +61,19 @@ COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
 # Copy Supervisor configuration
 COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy entrypoint script
+# Copy script to set environment variables
 COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
 
-# Make entrypoint script executable
+# Make script executable
 RUN chmod +x /usr/local/bin/env-script.sh
+
+# Run entrypoint script
+RUN /usr/local/bin/env-script.sh
 
 # Expose port 80, 8080
 EXPOSE 80
 
 EXPOSE 8080
-
-# Run entrypoint script
-RUN ["/usr/local/bin/env-script.sh"]
 
 # Start Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
