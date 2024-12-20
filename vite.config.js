@@ -10,4 +10,19 @@ export default defineConfig({
         }),
         react(),
     ],
+    resolve: {
+        alias: {
+            "@": "/resources/js",
+        },
+    },
+    server: {
+        hmr: {
+            host: "localhost",
+            port: 80,
+        },
+    },
+    optimizeDeps: {
+        include: ["react", "react-dom"],
+    },
+
 });
