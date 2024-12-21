@@ -38,10 +38,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 
 # Copy application code
-COPY . .
+# COPY . .
 
 # Copy built assets from build stage
-COPY --from=build /var/www/html/public/build /var/www/html/public/build
+COPY --from=build /var/www/html .
 
 # copy environment file
 RUN cp .env.example .env
@@ -53,7 +53,6 @@ RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
-# RUN composer require predis/predis
 
 # Copy nginx configuration
 COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
@@ -75,5 +74,5 @@ EXPOSE 80
 
 EXPOSE 8080
 
-# Start Supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start env-script.sh as entrypoint
+ENTRYPOINT ["/usr/local/bin/env-script.sh"]

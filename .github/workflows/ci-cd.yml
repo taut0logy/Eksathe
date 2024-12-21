@@ -118,6 +118,11 @@ jobs:
             echo "Optimizing..."
             docker exec eksathe-app php artisan optimize
 
+            # Check Frontend build
+            echo "Checking Frontend build..."
+            docker exec eksathe-app ls public/build
+            docker exec eksathe-app ls public/build/assets
+
             # Wait for the MySQL container to be ready
             echo "Waiting for MySQL to be ready..."
             until docker exec eksathe-db mysqladmin ping --silent; do
