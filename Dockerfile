@@ -41,15 +41,15 @@ WORKDIR /var/www/html
 COPY . .
 
 # Copy built assets from build stage
-COPY --from=build /var/www/html/public/build ./public/build
+COPY --from=build /var/www/html/public/build /var/www/html/public/build
 
 # copy environment file
 RUN cp .env.example .env
 
 # Set permissions
 RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
-    && chown -R www-data:www-data . \
-    && chmod -R 755 ./storage ./bootstrap/cache ./public
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -67,7 +67,7 @@ COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
 # Make script executable
 RUN chmod +x /usr/local/bin/env-script.sh
 
-# Run entrypoint script
+# Run script
 RUN /usr/local/bin/env-script.sh
 
 # Expose port 80, 8080
