@@ -47,9 +47,9 @@ COPY --from=build /var/www/html/public/build /var/www/html/public/build
 RUN cp .env.example .env
 
 # Set permissions
-RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public \
+    && mkdir -p /var/www/html/storage/framework/{sessions,views,cache}
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader

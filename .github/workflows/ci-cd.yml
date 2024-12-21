@@ -150,6 +150,10 @@ jobs:
             echo "Checking nginx configuration..."
             docker exec eksathe-app nginx -t
 
+            # Start reverb server
+            echo "Starting Reverb Server..."
+            docker exec eksathe-app php artisan reverb:start
+
             # Check Container log
             echo "Checking Container Logs..."
             docker logs eksathe-app
