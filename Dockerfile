@@ -38,10 +38,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 
 # Copy application code
-# COPY . .
+COPY . .
 
 # Copy built assets from build stage
-COPY --from=build /var/www/html .
+COPY --from=build /var/www/html/public/build /var/www/html/public/build
 
 # copy environment file
 RUN cp .env.example .env
@@ -65,9 +65,6 @@ COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
 
 # Make script executable
 RUN chmod +x /usr/local/bin/env-script.sh
-
-# Run script
-RUN /usr/local/bin/env-script.sh
 
 # Expose port 80, 8080
 EXPOSE 80
