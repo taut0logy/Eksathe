@@ -146,13 +146,14 @@ jobs:
             docker exec eksathe-app php artisan route:cache
             docker exec eksathe-app php artisan view:cache
 
+            # Restart container
+            echo "Restarting container..."
+            docker stop eksathe-app
+            docker start eksathe-app
+
             # Check nginx configuration
             echo "Checking nginx configuration..."
             docker exec eksathe-app nginx -t
-
-            # Start reverb server
-            echo "Starting Reverb Server..."
-            docker exec eksathe-app php artisan reverb:start
 
             # Check Container log
             echo "Checking Container Logs..."
