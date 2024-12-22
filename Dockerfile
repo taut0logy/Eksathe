@@ -9,6 +9,17 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Copy environment file
+RUN cp .env.example .env
+
+# Update environment variables
+
+COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
+
+RUN chmod +x /usr/local/bin/env-script.sh
+
+RUN /usr/local/bin/env-script.sh
+
 # Build the assets
 RUN npm run build
 
@@ -62,10 +73,10 @@ COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
 COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copy script to set environment variables
-COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
+COPY ./serverconfig/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Make script executable
-RUN chmod +x /usr/local/bin/env-script.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose port 80, 8080
 EXPOSE 80
@@ -73,4 +84,4 @@ EXPOSE 80
 EXPOSE 8080
 
 # Start Entrypoint
-ENTRYPOINT ["/usr/local/bin/env-script.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
