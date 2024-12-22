@@ -19,5 +19,5 @@ while IFS='=' read -r key value; do
   fi
 done < <(env)
 
-# Run Supervisor
+# Start supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

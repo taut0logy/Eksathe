@@ -118,6 +118,11 @@ jobs:
             # echo "Optimizing..."
             # docker exec eksathe-app php artisan optimize
 
+            # Check Frontend build
+            echo "Checking Frontend build..."
+            docker exec eksathe-app ls public/build
+            docker exec eksathe-app ls public/build/assets
+
             # Wait for the MySQL container to be ready
             echo "Waiting for MySQL to be ready..."
             until docker exec eksathe-db mysqladmin ping --silent; do
@@ -140,6 +145,11 @@ jobs:
             docker exec eksathe-app php artisan config:cache
             docker exec eksathe-app php artisan route:cache
             docker exec eksathe-app php artisan view:cache
+
+            # Restart container
+            echo "Restarting container..."
+            docker stop eksathe-app
+            docker start eksathe-app
 
             # Check nginx configuration
             echo "Checking nginx configuration..."
