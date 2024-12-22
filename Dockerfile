@@ -10,11 +10,10 @@ RUN npm install
 COPY . .
 
 # Copy environment file
-RUN cp .env.example .env \
-    && cp serverconfig/env-script.sh /usr/local/bin/env-script.sh
+RUN cp .env.example .env 
 
-RUN chmod +x /usr/local/bin/env-script.sh \
-    && /usr/local/bin/env-script.sh
+RUN chmod +x serverconfig/env-script.sh \
+    && serverconfig/env-script.sh
 
 # Build the assets
 RUN npm run build
