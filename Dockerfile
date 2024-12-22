@@ -10,15 +10,11 @@ RUN npm install
 COPY . .
 
 # Copy environment file
-RUN cp .env.example .env
+RUN cp .env.example .env \
+    && cp serverconfig/env-script.sh /usr/local/bin/env-script.sh
 
-# Update environment variables
-
-COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
-
-RUN chmod +x /usr/local/bin/env-script.sh
-
-RUN /usr/local/bin/env-script.sh
+RUN chmod +x /usr/local/bin/env-script.sh \
+    && /usr/local/bin/env-script.sh
 
 # Build the assets
 RUN npm run build
@@ -62,18 +58,21 @@ RUN cp .env.example .env
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
+# Set permissions and copy configuration files
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 storage bootstrap/cache public
+    && chmod -R 755 storage bootstrap/cache public \
+    && cp serverconfig/nginx.conf /etc/nginx/sites-available/default \
+    && cp serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf \
+    && cp serverconfig/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Copy nginx configuration
-COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
+# COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
 
 # Copy Supervisor configuration
-COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy script to set environment variables
-COPY ./serverconfig/entrypoint.sh /usr/local/bin/entrypoint.sh
+# Copy entrypoint script
+# COPY ./serverconfig/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Make script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
