@@ -8,8 +8,9 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
-RUN npm run build \
-    && rm -rf node_modules
+
+# Build the assets
+RUN npm run build
 
 # Production stage
 FROM php:8.2-fpm
@@ -29,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql zip gd sockets pcntl
 
 # Install Composer
@@ -41,19 +43,17 @@ WORKDIR /var/www/html
 COPY . .
 
 # Copy built assets from build stage
-COPY --from=build /var/www/html/public/build ./public/build
+COPY --from=build /var/www/html/public/build public/build
 
 # copy environment file
 RUN cp .env.example .env
 
-# Set permissions
-RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
-    && chown -R www-data:www-data . \
-    && chmod -R 755 ./storage ./bootstrap/cache ./public
-
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
-# RUN composer require predis/predis
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 storage bootstrap/cache public
 
 # Copy nginx configuration
 COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
@@ -67,13 +67,10 @@ COPY ./serverconfig/env-script.sh /usr/local/bin/env-script.sh
 # Make script executable
 RUN chmod +x /usr/local/bin/env-script.sh
 
-# Run entrypoint script
-RUN /usr/local/bin/env-script.sh
-
 # Expose port 80, 8080
 EXPOSE 80
 
 EXPOSE 8080
 
-# Start Supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start Entrypoint
+ENTRYPOINT ["/usr/local/bin/env-script.sh"]
