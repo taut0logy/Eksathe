@@ -80,17 +80,17 @@ class MessageController extends BaseController
                 }
                 $Message->attachments = $attachments;
             }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        } finally {
+            DB::commit();
             if ($receiverId) {
                 Conversation::updateConvWithMessage($receiverId, auth()->id(), $Message);
             }
             if ($serverId) {
                 Server::updateConvWithMessage($serverId, $Message);
             }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => $e->getMessage()], 500);
-        } finally {
-            DB::commit();
             SocketMessage::dispatch($Message);
             return new MessageResource($Message);
         }
