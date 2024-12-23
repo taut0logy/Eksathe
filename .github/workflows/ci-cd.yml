@@ -27,7 +27,29 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest \
+            --build-arg APP_KEY=${{ secrets.APP_KEY }} \
+            --build-arg APP_ENV=production \
+            --build-arg APP_DEBUG=true \
+            --build-arg APP_URL=${{ secrets.APP_URL }} \
+            --build-arg DB_HOST=eksathe-db \
+            --build-arg DB_PORT=3306 \
+            --build-arg DB_DATABASE=eksathe \
+            --build-arg DB_USERNAME=eksathe \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg MAIL_MAILER=smtp \
+            --build-arg MAIL_HOST=smtp.gmail.com \
+            --build-arg MAIL_PORT=587 \
+            --build-arg MAIL_USERNAME=${{ secrets.MAIL_ADDRESS }} \
+            --build-arg MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+            --build-arg MAIL_ENCRYPTION=tls \
+            --build-arg MAIL_FROM_ADDRESS=${{ secrets.MAIL_ADDRESS }} \
+            --build-arg REVERB_APP_KEY=${{ secrets.REVERB_APP_KEY }} \
+            --build-arg REVERB_APP_SECRET=${{ secrets.REVERB_APP_SECRET }} \
+            --build-arg REVERB_HOST=${{ secrets.REVERB_HOST }} \
+            --build-arg REVERB_PORT=8081 \
+            --build-arg REVERB_SERVER_PORT=8082 \
+            .
 
       - name: Push images to Docker Hub
         run: |
@@ -76,27 +98,6 @@ jobs:
             docker run -d \
               --name eksathe-app \
               -p 80:80 \
-              -e APP_KEY=${{ secrets.APP_KEY }} \
-              -e APP_ENV=production \
-              -e APP_DEBUG=true \
-              -e APP_URL=${{ secrets.APP_URL }} \
-              -e DB_HOST=eksathe-db \
-              -e DB_PORT=3306 \
-              -e DB_DATABASE=eksathe \
-              -e DB_USERNAME=eksathe \
-              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-              -e MAIL_MAILER=smtp \
-              -e MAIL_HOST=smtp.gmail.com \
-              -e MAIL_PORT=587 \
-              -e MAIL_USERNAME=${{ secrets.MAIL_ADDRESS }} \
-              -e MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
-              -e MAIL_ENCRYPTION=tls \
-              -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_ADDRESS }} \
-              -e REVERB_APP_KEY=${{ secrets.REVERB_APP_KEY }} \
-              -e REVERB_APP_SECRET=${{ secrets.REVERB_APP_SECRET }} \
-              -e REVERB_HOST="${{ secrets.REVERB_HOST }}" \
-              -e REVERB_PORT=8081 \
-              -e REVERB_SERVER_PORT=8082 \
               --network eksathe-network \
               ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
 
@@ -109,19 +110,6 @@ jobs:
             # Wait for the Laravel container to be ready (use a better approach for waiting)
             echo "Waiting for the Laravel container to be ready..."
             sleep 10
-
-            # Build Frontend
-            echo "Building Frontend..."
-            docker exec eksathe-app npm run build
-            docker exec eksathe-app rm -rf node_modules
-
-            # Link Storage
-            echo "Linking Storage..."
-            docker exec eksathe-app php artisan storage:link
-
-            # Optimize
-            # echo "Optimizing..."
-            docker exec eksathe-app php artisan optimize
 
             # Check Frontend build
             echo "Checking Frontend build..."
@@ -138,23 +126,6 @@ jobs:
             # Run Migrations
             echo "Running Migrations..."
             docker exec eksathe-app php artisan migrate:fresh --force
-
-            # Clear Cache
-            echo "Clearing Cache..."
-            docker exec eksathe-app php artisan cache:clear
-            docker exec eksathe-app php artisan config:clear
-            docker exec eksathe-app php artisan route:clear
-
-            # Cache Config, routes and views
-            echo "Caching Config, routes and views..."
-            docker exec eksathe-app php artisan config:cache
-            docker exec eksathe-app php artisan route:cache
-            docker exec eksathe-app php artisan view:cache
-
-            # Restart container
-            echo "Restarting container..."
-            docker stop eksathe-app
-            docker start eksathe-app
 
             # Check nginx configuration
             echo "Checking nginx configuration..."
