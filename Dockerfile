@@ -34,9 +34,6 @@ WORKDIR /var/www/html
 # Copy application code
 COPY . .
 
-# Copy built assets from build stage
-COPY --from=build /var/www/html/public/build public/build
-
 # copy environment file
 RUN cp .env.example .env
 
