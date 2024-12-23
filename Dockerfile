@@ -26,8 +26,7 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs build-essential
 
 # Install NPM
-RUN npm install -g npm \
-    && npm install
+RUN npm install -g npm
 
 # Set working directory
 WORKDIR /var/www/html
@@ -40,6 +39,9 @@ RUN cp .env.example .env
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# Build assets
+RUN npm install
 
 # Set permissions and copy configuration files
 RUN chown -R www-data:www-data /var/www/html \
