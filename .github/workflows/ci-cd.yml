@@ -71,28 +71,28 @@ jobs:
             docker network create eksathe-network || true
 
             # Stop and remove existing containers
-            docker stop eksathe-db || true
-            docker rm eksathe-db || true
+            # docker stop eksathe-db || true
+            # docker rm eksathe-db || true
             docker stop eksathe-app || true
             docker rm eksathe-app || true
 
             # Pull latest images
-            docker pull mysql:8
+            # docker pull mysql:8
             docker pull ${{ secrets.DOCKER_USERNAME }}/eksathe-app:latest
 
             # Remove dangling images
             docker image prune -f || true
 
             # Run MySQL container
-            docker run -d \
-              --name eksathe-db \
-              -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-              -e MYSQL_DATABASE=eksathe \
-              -e MYSQL_USER=eksathe \
-              -e MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -v db_data:/var/lib/mysql \
-              --network eksathe-network \
-              mysql:8
+            # docker run -d \
+            #   --name eksathe-db \
+            #   -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+            #   -e MYSQL_DATABASE=eksathe \
+            #   -e MYSQL_USER=eksathe \
+            #   -e MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            #   -v db_data:/var/lib/mysql \
+            #   --network eksathe-network \
+            #   mysql:8
 
             # Run app container
             docker run -d \
@@ -117,15 +117,15 @@ jobs:
             docker exec eksathe-app ls public/build/assets
 
             # Wait for the MySQL container to be ready
-            echo "Waiting for MySQL to be ready..."
-            until docker exec eksathe-db mysqladmin ping --silent; do
-              echo "MySQL is not ready yet..."
-              sleep 3
-            done
+            # echo "Waiting for MySQL to be ready..."
+            # until docker exec eksathe-db mysqladmin ping --silent; do
+            #   echo "MySQL is not ready yet..."
+            #   sleep 3
+            # done
 
             # Run Migrations
-            echo "Running Migrations..."
-            docker exec eksathe-app php artisan migrate:fresh --force
+            # echo "Running Migrations..."
+            # docker exec eksathe-app php artisan migrate:fresh --force
 
             # Check nginx configuration
             echo "Checking nginx configuration..."

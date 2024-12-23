@@ -110,7 +110,7 @@ export default function Authenticated({
 
     return (
         <>
-            <div className="flex flex-col">
+            <div className="flex flex-col h-[100dvh]">
                 <nav className="border-b border-primary/50">
                     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
@@ -273,8 +273,8 @@ export default function Authenticated({
                 </nav>
 
                 {header && (
-                    <header className="shadow bg-accent/80 ">
-                        <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <header className="mb-4 shadow bg-neutral/80 text-primary/90">
+                        <div className="px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                             {header}
                         </div>
                     </header>

@@ -22,7 +22,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required',
             'remember' => 'boolean',
         ]);
@@ -37,10 +37,7 @@ class AuthController extends Controller
         }
 
         if(Auth::attempt($credentials, $remember)){
-            $user = User::where('email', $credentials['email'])->first();
-            $request->session()->put('user_id', $user->id);
-            $request->session()->put('authenticated', true);
-            $request->session()->put('user_name', $user->name);
+            // $user = User::where('email', $credentials['email'])->first();
             $user->update(['last_login_at' => now()]);
 
             return redirect()->intended(route('dashboard'))->with('success', 'Login Successful. Welcome ' . $user->name . '!');
@@ -172,7 +169,7 @@ class AuthController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:8|confirmed',
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'profile_photo' => 'required|image|mimes:avif,jpeg,png,jpg,gif,svg,webp|max:3072',
         ]);
 
         $image = $request->file('profile_photo');

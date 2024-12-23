@@ -8,11 +8,11 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="text-xl font-semibold leading-tight text-accent-content">Profile</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight">Profile</h2>}
         >
             <Head title="Profile" />
 
-            <div className="py-12 overflow-y-scroll">
+            <div className="overflow-y-scroll">
                 <div className="mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
                     <div className="p-4 shadow bg-neutral/80 text-neutral-content sm:p-8 sm:rounded-lg">
                         <UpdateProfileInformationForm
