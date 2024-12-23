@@ -21,19 +21,20 @@ export default function VerifyEmail({ status }) {
             </div>
 
             {status === 'verification-link-sent' && (
-                <div className="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+                <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
                     A new verification link has been sent to the email address you provided during registration.
                 </div>
             )}
 
             <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center justify-between mt-4">
                     <PrimaryButton disabled={processing}>Resend Verification Email</PrimaryButton>
 
                     <Link
+                        method="post"
                         href={route('logout')}
                         as="button"
-                        className="underline text-sm text-neutral-content hover:text-accent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        className="text-sm underline rounded-md text-neutral-content hover:text-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
                         Log Out
                     </Link>
