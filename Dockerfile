@@ -26,7 +26,8 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs build-essential
 
 # Install NPM
-RUN npm install -g npm
+RUN npm install -g npm \
+    && npm install
 
 # Set working directory
 WORKDIR /var/www/html

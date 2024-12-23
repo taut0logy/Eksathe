@@ -25,5 +25,8 @@ rm -rf public/build
 # Build the application
 npm run build
 
+# Clear node_modules folder
+rm -rf node_modules
+
 # Start supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
