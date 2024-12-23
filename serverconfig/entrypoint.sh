@@ -19,5 +19,11 @@ while IFS='=' read -r key value; do
   fi
 done < <(env)
 
+# Clear build folder
+rm -rf public/build
+
+# Build the application
+npm run build
+
 # Start supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

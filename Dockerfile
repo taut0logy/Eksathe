@@ -1,24 +1,3 @@
-FROM node:18-alpine as build
-
-WORKDIR /var/www/html
-
-# Copy only package files first to leverage cache
-COPY package*.json ./
-RUN npm install
-
-# Copy the rest of the application code
-COPY . .
-
-# Copy environment file
-RUN cp .env.example .env 
-
-RUN chmod +x serverconfig/env-script.sh \
-    && serverconfig/env-script.sh
-
-# Build the assets
-RUN npm run build
-
-# Production stage
 FROM php:8.2-fpm
 
 # Install system dependencies
@@ -42,6 +21,13 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Install Node.js
+RUN curl -sL https://deb.nodesource.com/setup | bash - \
+    && apt-get install -y nodejs build-essential
+
+# Install NPM
+RUN npm install -g npm
+
 # Set working directory
 WORKDIR /var/www/html
 
@@ -63,15 +49,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && cp serverconfig/nginx.conf /etc/nginx/sites-available/default \
     && cp serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf \
     && cp serverconfig/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Copy nginx configuration
-# COPY ./serverconfig/nginx.conf /etc/nginx/sites-available/default
-
-# Copy Supervisor configuration
-# COPY ./serverconfig/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy entrypoint script
-# COPY ./serverconfig/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Make script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh

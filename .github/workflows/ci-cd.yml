@@ -108,7 +108,17 @@ jobs:
 
             # Wait for the Laravel container to be ready (use a better approach for waiting)
             echo "Waiting for the Laravel container to be ready..."
-            sleep 10
+            counter=0
+            until docker exec eksathe-app ls public/build || [ $counter -ge 100 ]; do
+              echo "Laravel container is not ready yet... (attempt $counter/100)"
+              counter=$((counter + 1))
+              sleep 3
+            done
+            
+            if [ $counter -ge 100 ]; then
+              echo "Error: Timed out waiting for Laravel container after 5 minutes"
+              exit 1
+            fi
 
             # Link Storage
             echo "Linking Storage..."
