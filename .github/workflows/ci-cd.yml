@@ -141,4 +141,4 @@ jobs:
 
             # Check laravel log
             echo "Checking Laravel log..."
-            docker exec eksathe-app cat storage/logs/laravel.log
+            docker exec eksathe-app cat storage/logs/laravel.log || true
