@@ -15,12 +15,6 @@ export default defineConfig({
             "@": "/resources/js",
         },
     },
-    server: {
-        hmr: {
-            host: "localhost",
-            port: 80,
-        },
-    },
     optimizeDeps: {
         include: ["react", "react-dom"],
     },

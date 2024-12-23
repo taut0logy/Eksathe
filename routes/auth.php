@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
         return back()->with('message', 'Verification link sent!');
     })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/confirm-password', [AuthController::class, 'confirmPasswordPage'])->name('confirm-password');
 

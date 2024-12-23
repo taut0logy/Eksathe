@@ -30,10 +30,10 @@ export default function Login({ status, success, info, error,  canResetPassword 
         <GuestLayout>
             <Head title="Log in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-            {success && <div className="mb-4 font-medium text-sm text-success">{success}</div>}
-            {error && <div className="mb-4 font-medium text-sm text-error">{error}</div>}
-            {info && <div className="mb-4 font-medium text-sm text-info">{info}</div>}
+            {status && <div className="mb-4 text-sm font-medium text-green-600">{status}</div>}
+            {success && <div className="mb-4 text-sm font-medium text-success">{success}</div>}
+            {error && <div className="mb-4 text-sm font-medium text-error">{error}</div>}
+            {info && <div className="mb-4 text-sm font-medium text-info">{info}</div>}
 
             <form onSubmit={submit}>
                 <div>
@@ -44,7 +44,7 @@ export default function Login({ status, success, info, error,  canResetPassword 
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
@@ -61,7 +61,7 @@ export default function Login({ status, success, info, error,  canResetPassword 
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
@@ -76,15 +76,15 @@ export default function Login({ status, success, info, error,  canResetPassword 
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
                         />
-                        <span className="ms-2 text-sm ">Remember me</span>
+                        <span className="text-sm ms-2 ">Remember me</span>
                     </label>
                 </div>
 
-                <div className="flex items-center justify-end mt-4">
+                <div className="flex flex-wrap items-center justify-end mt-4">
                     {canResetPassword && (
                         <Link
                             href={route('forgot-password')}
-                            className="underline text-sm  hover:text-accent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                            className="py-4 text-sm underline rounded-md hover:text-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                         >
                             Forgot your password?
                         </Link>
@@ -98,7 +98,7 @@ export default function Login({ status, success, info, error,  canResetPassword 
                 <div className="flex items-center justify-center mt-6">
                     <Link
                         href={route('register')}
-                        className="underline text-sm hover:text-accent dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        className="text-sm underline rounded-md hover:text-accent dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
                         Don't have an account?
                     </Link>

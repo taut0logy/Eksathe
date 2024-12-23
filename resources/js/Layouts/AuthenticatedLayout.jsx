@@ -110,7 +110,7 @@ export default function Authenticated({
 
     return (
         <>
-            <div className="flex flex-col h-screen min-h-screen">
+            <div className="flex flex-col">
                 <nav className="border-b border-primary/50">
                     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
@@ -131,7 +131,7 @@ export default function Authenticated({
                                 </div>
                             </div>
 
-                            <div className="flex">
+                            <div className="flex gap-4">
 
                                 <ThemeToggler />
 
@@ -164,13 +164,14 @@ export default function Authenticated({
 
                                             <Dropdown.Content className="" contentClasses="bg-neutral">
                                                 <Dropdown.Link
-                                                    className="rounded-md hover:bg-primary/90"
+                                                    className={`rounded-md hover:bg-primary/90 ${route().current("profile.edit") ? "hidden" : ""}`}
                                                     href={route("profile.edit")}
                                                 >
                                                     Profile
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
                                                     className="rounded-md hover:bg-primary/90"
+                                                    method="post"
                                                     href={route("logout")}
                                                     as="button"
                                                 >
@@ -230,8 +231,8 @@ export default function Authenticated({
 
                     <div
                         className={
-                            (showingNavigationDropdown ? "block" : "hidden") +
-                            " sm:hidden"
+                            (showingNavigationDropdown ? "h-[13rem]" : "h-0") +
+                            " sm:hidden transition-all overflow-hidden"
                         }
                     >
                         <div className="pt-2 pb-3 space-y-1">
@@ -254,7 +255,9 @@ export default function Authenticated({
                             </div>
 
                             <div className="mt-3 space-y-1">
-                                <ResponsiveNavLink href={route("profile.edit")}>
+                                <ResponsiveNavLink href={route("profile.edit")}
+                                    className={`${route().current("profile.edit") ? "hidden" : ""}`}
+                                >
                                     Profile
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
