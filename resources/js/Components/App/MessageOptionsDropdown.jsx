@@ -22,12 +22,12 @@ export default function MessageOptionsDropdown({message}) {
 
 
     return (
-        <div className="absolute z-10 -translate-y-1/2 top-1/2 right-full text-secondary -translate-x-7">
+        <div className="absolute z-10 -translate-x-6 -translate-y-1/2 top-1/2 right-full text-secondary sm:-translate-x-7">
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button
-                        className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/40">
-                        <EllipsisVerticalIcon className="w-5 h-5"/>
+                        className="flex items-center justify-center rounded-full h-7 w-7 sm:w-8 sm:h-8 hover:bg-black/40">
+                        <EllipsisVerticalIcon className="w-6 h-6"/>
                     </Menu.Button>
                 </div>
                 <Transition

@@ -146,9 +146,9 @@ export default function Dashboard({
                 el.focus();
             }
         });
-        const offMessageSent = on("message.sent",() => {
+        const offMessageSent = on("message.sent", () => {
             setReplyMessage(null);
-        })
+        });
         return () => {
             offReply();
             offGoTo();
@@ -241,7 +241,7 @@ export default function Dashboard({
                     />
                     <div
                         ref={messagesCtrRef}
-                        className="flex flex-1 p-5 overflow-y-auto"
+                        className="flex flex-1 px-2 py-5 overflow-y-auto sm:px-5"
                     >
                         {localMessages.length === 0 && (
                             <div className="flex flex-col items-center justify-center w-full">

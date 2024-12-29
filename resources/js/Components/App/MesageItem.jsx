@@ -67,7 +67,13 @@ export default function MessageItem({ message, attachmentClick, isOnline }) {
             }
             id={message.id}
         >
-            {<UserAvatar user={message.sender} isOnline={isOnline} />}
+            {!isMe && (
+                <UserAvatar
+                    user={message.sender}
+                    isOnline={isOnline}
+                    className=""
+                />
+            )}
             <div className={"chat-header"}>
                 {!isMe ? message.sender.name : ""}
                 <time className="ml-2 text-xs opacity-50">
@@ -111,7 +117,7 @@ export default function MessageItem({ message, attachmentClick, isOnline }) {
                 {isMe && <MessageOptionsDropdown message={message} />}
                 <button
                     onClick={() => replyToClick(message)}
-                    className={`absolute z-10 flex items-center justify-center w-8 h-8 -translate-y-1/2 ${
+                    className={`absolute z-10 flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 -translate-y-1/2 ${
                         isMe ? "right-full" : "left-full"
                     } rounded-full  top-1/2 text-secondary hover:bg-black/40`}
                 >
