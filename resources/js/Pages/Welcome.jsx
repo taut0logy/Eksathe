@@ -36,8 +36,8 @@ export default function Welcome({
 
             <div className="relative min-h-screen flex flex-col items-center justify-between selection:bg-[#FF2D20] selection:text-white">
                 <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                    <header className="grid items-center grid-cols-2 gap-2 py-10 lg:grid-cols-3">
-                        <div className="flex lg:justify-center lg:col-start-2">
+                    <header className="flex items-center gap-2 py-10">
+                        <div className="flex lg:justify-center">
                             <ApplicationLogo className="w-10 h-10 fill-current md:w-20 md:h-20" />
                         </div>
                         <nav className="flex justify-end flex-1 -mx-3">
