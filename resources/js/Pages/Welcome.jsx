@@ -21,7 +21,7 @@ export default function Welcome({
     };
 
     return (
-        <div className="overflow-y-scroll ">
+        <div className="overflow-y-scroll">
             <Head title="Welcome" />
             {success && (
                 <div className="mb-4 text-sm font-medium text-success">

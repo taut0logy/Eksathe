@@ -4,7 +4,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 export default function Guest({ children, logo = true }) {
     return (
-        <div className="flex flex-col items-center h-[100dvh] px-4 pt-6 overflow-y-auto sm:justify-center sm:pt-4">
+        <div className="flex flex-col items-center h-[100dvh] p-4 overflow-y-auto sm:justify-center sm:pt-4">
             {logo && (
                 <div>
                     <Link href="/">
