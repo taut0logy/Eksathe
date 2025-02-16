@@ -32,10 +32,10 @@ jobs:
             --build-arg APP_ENV=production \
             --build-arg APP_DEBUG=true \
             --build-arg APP_URL=${{ secrets.APP_URL }} \
-            --build-arg DB_HOST=eksathe-db \
-            --build-arg DB_PORT=3306 \
+            --build-arg DB_HOST=mysql-raufun-raufun.h.aivencloud.com \
+            --build-arg DB_PORT=21261 \
             --build-arg DB_DATABASE=eksathe \
-            --build-arg DB_USERNAME=eksathe \
+            --build-arg DB_USERNAME=avnadmin \
             --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             --build-arg MAIL_MAILER=smtp \
             --build-arg MAIL_HOST=smtp.gmail.com \
