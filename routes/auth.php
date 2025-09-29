@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/confirm-password', [AuthController::class, 'confirmPasswordPage'])->name('confirm-password');
+    Route::get('/confirm-password', [AuthController::class, 'confirmPasswordPage'])->name('password.confirm');
 
     Route::post('/confirm-password', [AuthController::class, 'confirmPassword'])->name('confirm-password');
 
