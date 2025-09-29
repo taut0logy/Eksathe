@@ -37,10 +37,10 @@ class ProfileController extends Controller
 
         if ($profile_photo) {
             if($user->profile_photo_path) {
-                Storage::disk('public')->delete($user->profile_photo_path);
+                Storage::delete($user->profile_photo_path);
             }
             $name = uniqid('avatar_') . '.' . $profile_photo->getClientOriginalExtension();
-            $path = $profile_photo->storeAs('avatars', $name, 'public');
+            $path = $profile_photo->storeAs('avatars', $name);
             $user->profile_photo_path = $path;
         }
 
@@ -73,7 +73,7 @@ class ProfileController extends Controller
         $profilePhotoPath = $user->profile_photo_path;
 
         if ($profilePhotoPath) {
-            Storage::disk('public')->delete($profilePhotoPath);
+            Storage::disk('s3')->delete($profilePhotoPath);
         }
 
         $user->delete();

@@ -1,0 +1,109 @@
+# Laravel .dockerignore
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation and README files
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+*.md
+
+# Environment files (security sensitive)
+.env.example
+
+# Dependencies (will be installed in container)
+/vendor
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Laravel specific
+/storage/app/*
+!/storage/app/.gitkeep
+!/storage/app/public/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+
+# Build artifacts and compiled assets
+/public/hot
+/public/storage
+/public/build
+/public/mix-manifest.json
+
+# Testing
+/tests/_output/*
+/.phpunit.result.cache
+/coverage
+phpunit.xml
+
+# Local development
+.vagrant/
+Homestead.json
+Homestead.yaml
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Serverconfig (if using for local development)
+/serverconfig/garage/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+.tmp/
+
+# Local configuration files
+docker-compose.local.yml
+.docker/

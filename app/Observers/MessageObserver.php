@@ -12,8 +12,7 @@ class MessageObserver
 {
     public function deleting(Message $message){
         $message->attachments->each(function($attachment){
-            $dir=dirname($attachment->path);
-            Storage::disk('public')->deleteDirectory($dir);
+            Storage::delete($attachment->path);
         });
         $message->attachments()->delete();
         //Log::info('Deleting Message:', ['message' => $message]);

@@ -62,34 +62,39 @@ class MessageController extends BaseController
         $receiverId = $data['receiver_id'] ?? null;
         $serverId = $data['server_id'] ?? null;
         $files = $data['attachments'] ?? [];
-        $Message = Message::create($data);
-        Log::info('Message data', [$data]);
-        Log::info('Message', [$Message]);
-        $attachments = [];
-        if ($files) {
-            foreach ($files as $file) {
-                $dir = 'attachments/' . Str::random(32);
-                Storage::makeDirectory($dir);
-                $model = [
-                    'message_id' => $Message->id,
-                    'name' => $file->getClientOriginalName(),
-                    'mime' => $file->getClientMimeType(),
-                    'size' => $file->getSize(),
-                    'path' => $file->store($dir, 'public')
-                ];
-                $attachment = MessageAttachment::create($model);
-                $attachments[] = $attachment;
+        try {
+            DB::beginTransaction();
+            $Message = Message::create($data);
+            $attachments = [];
+            if ($files) {
+                foreach ($files as $file) {
+                    $dir = 'attachments';
+                    $model = [
+                        'message_id' => $Message->id,
+                        'name' => $file->getClientOriginalName(),
+                        'mime' => $file->getClientMimeType(),
+                        'size' => $file->getSize(),
+                        'path' => $file->store($dir)
+                    ];
+                    $attachment = MessageAttachment::create($model);
+                    $attachments[] = $attachment;
+                }
+                $Message->attachments = $attachments;
             }
-            $Message->attachments = $attachments;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        } finally {
+            DB::commit();
+            if ($receiverId) {
+                Conversation::updateConvWithMessage($receiverId, auth()->id(), $Message);
+            }
+            if ($serverId) {
+                Server::updateConvWithMessage($serverId, $Message);
+            }
+            SocketMessage::dispatch($Message);
+            return new MessageResource($Message);
         }
-        if ($receiverId) {
-            Conversation::updateConvWithMessage($receiverId, auth()->id(), $Message);
-        }
-        if ($serverId) {
-            Server::updateConvWithMessage($serverId, $Message);
-        }
-        SocketMessage::dispatch($Message);
-        return new MessageResource($Message);
     }
 
     public function destroy(Message $message)

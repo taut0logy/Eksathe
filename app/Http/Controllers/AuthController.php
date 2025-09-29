@@ -179,7 +179,7 @@ class AuthController extends Controller
         // $image_name = bcrypt($request->username) . '.' . $image->getClientOriginalExtension();
         // $image->storeAs('public/profile_photo', $image_name);
         $name = uniqid('avatar_') . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('avatars', $name, 'public');
+        $path = $image->storeAs('avatars', $name);
         $user = User::create([
             'username' => $request->username,
             'name' => $request->name,
