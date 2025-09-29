@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json vite.config.js tailwind.config.js postcss.config.js jsconfig.json ./
 COPY resources/ resources/
 
-RUN npm ci --only=production
+RUN npm install
 
 RUN npm run build
 
